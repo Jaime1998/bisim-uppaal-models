@@ -1,0 +1,1561 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.1//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_2.dtd'>
+<nta>
+	<declaration>/* 
+    Case study used for Bisimulation Verification of UPPAAL Models (2020)
+    Dept of Software Science
+    TALLINN UNIVERSITY OF TECHNOLOGY (TALTECH)
+    Modified by : Naveed Ahmed Alizai M.Sc
+    Supervisors :  Jüri Vain Ph.D. , Leonidas Tsiopoulos Ph.D.
+    
+    Shokri-Manninen, Fatima &amp; Tsiopoulos, Leonidas &amp; Vain, Juri &amp; Waldén, Marina. (2020). 
+    Integration of iUML-B and UPPAAL Timed Automata for Development of Real-Time Systems with Concurrent Processes. 10.1007/978-3-030-48077-6_13.
+*/
+// Place global declarations here.
+//Uppaal does not support enumerated types!!!
+
+// varibles for abstarc model
+clock Gclk;
+const int N=3;
+typedef int [0, N-1] id_t; //process identifier subtype
+bool Perm_Given[N];
+bool LQ_per[N] ;
+bool Lan_per[N] ;
+bool Elan_per[N];
+bool Emergency_Prog;
+bool Runw_asn[N];
+bool Runway_busy;
+bool Gate_asn[N] ;
+typedef int [0, 1] boo;
+bool High_Risk [N];
+
+// LR =Landing Request, LRR = Landing Request Rejection, LQ= Landing Queue, LP=  Landing Permission, GG= Give Gate, Emergency Landing Request=ELR, Emergency Landing Permission=ELP, 
+// High priority Queue = HPQ, Low priority Queue=LPQ
+chan ELR[N],LR[N],LRR[N],LQ[N],GG[N],LP[N],HPQ[N],LPQ[N],ELRR[N], EGG[N],ELR_LQ[N], HPQ_LP[N], LPQ_LP[N];
+urgent chan ELP[N],ELR_HPQ[N],ELR_LPQ[N];
+chan priority LR,ELR,LRR,LQ,GG,LP,HPQ,LPQ,ELRR, EGG,ELR_LQ, HPQ_LP, LPQ_LP &lt; ELP,ELR_HPQ,ELR_LPQ;
+// varibles for queue refinement model
+
+id_t HPqueue [id_t];
+id_t LPqueue [id_t];
+int [0,N] lenH,lenL, counter=0;
+
+
+const int Max_Queue_Size=4 ;
+
+
+bool flag=false;
+chan e_sync1[N], e_sync2[N], e_sync3[N], e_sync4[N], e_sync5[N], e_sync6[N], e_sync7[N], e_sync8[N], e_sync9[N], e_sync10[N];
+chan e_sync11[N], e_sync12[N], e_sync13[N], e_sync14[N], e_sync15[N], e_sync16[N], e_sync17[N], e_sync18[N], e_sync19[N], e_sync20[N];
+chan e_sync21[N], e_sync22[N];
+chan c_sync1, c_sync2, c_sync3, c_sync4, c_sync5, c_sync6, c_sync7, c_sync8, c_sync9;
+int f1[N], f2[N], f3[N], f4[N], f5[N], f6[N], f7[N], f8[N], f9[N];
+int g1=0, g2=0, g3=0, g4=0, g5=0, g6=0, g7=0, g8=0, g9=0;
+int p_;
+int fp_;//HP_index_, LP_index_;
+bool br_;
+bool bb_;
+// varibles for fuel refinement model
+
+
+const int low =0;
+const int medium=1;
+const int high=2;
+typedef int[0,2] pState;
+pState fuel[N]={low,medium,low};
+typedef int[1,2] fstate;
+
+
+
+//Merged model declarations 
+
+// Place global declarations here.
+//Uppaal does not support enumerated types!!!
+// varibles for abstarc model
+// LR =Landing Request, LRR = Landing Request Rejection, LQ= Landing Queue, LP=  Landing Permission, GG= Give Gate, Emergency Landing Request=ELR, Emergency Landing Permission=ELP, 
+// High priority Queue = HPQ, Low priority Queue=LPQ
+// varibles for queue refinement model
+// varibles for fuel refinement model
+clock Gclk_;
+const int N_=3;
+typedef int [0, N_-1] id_t_; //process_ identifier_ subtype_
+bool Perm_Given_[N_];
+bool LQ_per_[N_] ;
+bool Lan_per_[N_] ;
+bool Elan_per_[N_];
+bool Emergency_Prog_;
+bool Runw_asn_[N_];
+bool Runway_busy_;
+bool Gate_asn_[N_] ;
+typedef int [0, 1] boo_;
+bool High_Risk_ [N_];
+chan ELR_[N_],LR_[N_],LRR_[N_],LQ_[N_],GG_[N_],LP_[N_],HPQ_[N_],LPQ_[N_],ELRR_[N_], EGG_[N_],ELR_LQ_[N_], HPQ_LP_[N_], LPQ_LP_[N_];
+urgent chan ELP_[N_],ELR_HPQ_[N_],ELR_LPQ_[N_];
+chan priority LR_,ELR_,LRR_,LQ_,GG_,LP_,HPQ_,LPQ_,ELRR_, EGG_,ELR_LQ_, HPQ_LP_, LPQ_LP_ &lt; ELP_,ELR_HPQ_,ELR_LPQ_;
+id_t_ HPqueue_ [id_t_];
+id_t_ LPqueue_ [id_t_];
+int [0,N_] lenH_,lenL_, counter_=0;
+const int Max_Queue_Size_=4 ;
+const int low_ =0;
+const int medium_=1;
+const int high_=2;
+typedef int[0,2] pState_;
+pState_ fuel_[N_]={low_,medium_,low_};
+typedef int[1,2] fstate_;</declaration>
+	<template>
+		<name x="5" y="5">M3_Planes</name>
+		<parameter>const id_t id</parameter>
+		<declaration>// Place local declarations here.
+clock x;
+
+    
+void enHPqueue(id_t element)
+{
+   HPqueue [lenH++]=element;
+ }
+
+ void enLPqueue(id_t element)
+ {
+   LPqueue [lenL++]=element;
+  }
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+void deHPqueue()   // normal dequeue happens from High priority Queue
+{
+        int i = 0;
+        --lenH;
+        while (i &lt; lenH)
+        {
+                HPqueue[i] = HPqueue[i + 1];
+                i++;
+        }
+        HPqueue[i] = 0;
+}
+void deLPqueue()    // normal dequeue happens from Low priority Queue
+{
+        int i = 0;
+        --lenL;
+        while (i &lt; lenL)
+        {
+                LPqueue[i] = LPqueue[i + 1];
+                i++;
+        }
+        LPqueue[i] = 0;
+}
+
+
+ //    ***********************   High Priority Queue  removing element in emergancy situation******************
+
+
+id_t Em_deHPqu_idx(id_t plane )   // dequeue happens when plane send emergancy landing while it is in queue, we want to know its position in the queue ### ELR_HPQ ###
+{       
+        int i=0;
+
+      while (HPqueue[i] != plane)
+  {
+        i++;
+       
+   }
+    return i;
+   }
+
+
+void Em_deHPqueue(id_t i )   // dequeue happens when plane send emergancy landing while it is in queue we remove the plane based on its position in the queue ### ELR_HPQ ###
+{       
+    
+        --lenH;
+        while (i &lt; lenH)
+        {
+                HPqueue[i] = HPqueue[i + 1];
+                i++;
+        }
+        HPqueue[i] = 0;
+}
+   
+//    ***********************   Low Priority Queue  removing element in emergancy situation******************
+
+
+id_t Em_deLPqu_idx(id_t plane )   // dequeue happens when plane send emergancy landing while it is in queue but we want to know its position in the queue ### ELR_HPQ ###
+{       
+     int i=0;
+
+      while (LPqueue[i] != plane)
+  {
+         i++;
+   }
+    return i;
+   }
+
+void Em_deLPqueue(id_t i)  //  dequeue happens when plane send emergancy landing while it is in queue we remove the plane based on its position in the queue ### ELR_LPQ ###
+{
+   
+       --lenL;
+        while (i &lt; lenL)
+       
+        {
+                LPqueue[i] = LPqueue[i + 1];
+                i++;
+                
+        }
+        LPqueue[i] = 0;
+} 
+
+
+
+
+
+</declaration>
+		<location id="id0" x="459" y="-315">
+			<name x="433" y="-349">High_PQ</name>
+			<label kind="invariant" x="416" y="-306">x&lt;=10</label>
+		</location>
+		<location id="id1" x="-136" y="0">
+			<name x="-119" y="-9">Leaving_Airport</name>
+		</location>
+		<location id="id2" x="527" y="204">
+			<name x="501" y="212">At_Gate</name>
+		</location>
+		<location id="id3" x="-68" y="179">
+			<name x="-144" y="145">Waiting_EmergLand</name>
+			<urgent/>
+		</location>
+		<location id="id4" x="467" y="68">
+			<name x="493" y="51">Landing_Runway</name>
+			<urgent/>
+		</location>
+		<location id="id5" x="391" y="-136">
+			<name x="366" y="-179">Low_PQ</name>
+			<label kind="invariant" x="357" y="-127">x&lt;=20</label>
+		</location>
+		<location id="id6" x="-68" y="-187">
+			<name x="-153" y="-221">Waiting_L_Permission</name>
+			<urgent/>
+		</location>
+		<location id="id7" x="-399" y="0">
+			<name x="-382" y="-8">In_Air</name>
+			<label kind="invariant" x="-416" y="8">x &lt;=20</label>
+		</location>
+		<location id="id8" x="-229" y="179">
+			<urgent/>
+		</location>
+		<location id="id9" x="-195" y="-187">
+			<urgent/>
+		</location>
+		<location id="id10" x="-102" y="-280">
+			<urgent/>
+		</location>
+		<location id="id11" x="-68" y="238">
+			<urgent/>
+		</location>
+		<location id="id12" x="569" y="-136">
+			<urgent/>
+		</location>
+		<location id="id13" x="59" y="59">
+			<urgent/>
+		</location>
+		<location id="id14" x="263" y="8">
+			<urgent/>
+		</location>
+		<location id="id15" x="595" y="-314">
+			<urgent/>
+		</location>
+		<location id="id16" x="-433" y="212">
+			<urgent/>
+		</location>
+		<init ref="id7"/>
+		<transition>
+			<source ref="id16"/>
+			<target ref="id3"/>
+			<label kind="synchronisation" x="-382" y="212">e_sync16[id]!</label>
+			<nail x="-238" y="212"/>
+		</transition>
+		<transition>
+			<source ref="id15"/>
+			<target ref="id0"/>
+			<label kind="synchronisation" x="501" y="-306">e_sync15[id]!</label>
+			<label kind="assignment" x="493" y="-314">x:=0</label>
+			<nail x="595" y="-280"/>
+			<nail x="501" y="-280"/>
+		</transition>
+		<transition>
+			<source ref="id14"/>
+			<target ref="id4"/>
+			<label kind="synchronisation" x="297" y="8">e_sync14[id]!</label>
+			<nail x="391" y="8"/>
+		</transition>
+		<transition>
+			<source ref="id4"/>
+			<target ref="id14"/>
+			<label kind="guard" x="246" y="68">flag==false</label>
+			<label kind="synchronisation" x="374" y="42">GG[id]?</label>
+			<label kind="assignment" x="255" y="42">f7[id]=1, flag=true</label>
+			<nail x="238" y="68"/>
+		</transition>
+		<transition>
+			<source ref="id13"/>
+			<target ref="id3"/>
+			<label kind="synchronisation" x="-59" y="59">e_sync11[id]!</label>
+			<nail x="-68" y="59"/>
+		</transition>
+		<transition>
+			<source ref="id12"/>
+			<target ref="id5"/>
+			<label kind="synchronisation" x="459" y="-136">e_sync12[id]!</label>
+			<label kind="assignment" x="425" y="-136">x:=0</label>
+		</transition>
+		<transition>
+			<source ref="id11"/>
+			<target ref="id3"/>
+			<label kind="synchronisation" x="-170" y="212">e_sync3[id]!</label>
+			<nail x="-178" y="238"/>
+			<nail x="-178" y="212"/>
+		</transition>
+		<transition>
+			<source ref="id3"/>
+			<target ref="id11"/>
+			<label kind="guard" x="-25" y="221">flag==false</label>
+			<label kind="synchronisation" x="-42" y="187">ELP[id]?</label>
+			<label kind="assignment" x="-76" y="204">f4[id]=1, flag=true</label>
+			<nail x="-34" y="221"/>
+			<nail x="-34" y="238"/>
+		</transition>
+		<transition>
+			<source ref="id10"/>
+			<target ref="id6"/>
+			<label kind="synchronisation" x="-93" y="-272">e_sync2[id]!</label>
+			<nail x="-68" y="-280"/>
+		</transition>
+		<transition>
+			<source ref="id6"/>
+			<target ref="id10"/>
+			<label kind="guard" x="-187" y="-323">flag==false</label>
+			<label kind="synchronisation" x="-187" y="-306">LQ[id]?</label>
+			<label kind="assignment" x="-178" y="-272">f3[id]=1,
+flag=true</label>
+			<nail x="-187" y="-229"/>
+			<nail x="-187" y="-280"/>
+		</transition>
+		<transition>
+			<source ref="id9"/>
+			<target ref="id6"/>
+			<label kind="synchronisation" x="-177" y="-204">e_sync5[id]!</label>
+		</transition>
+		<transition>
+			<source ref="id8"/>
+			<target ref="id3"/>
+			<label kind="synchronisation" x="-204" y="162">e_sync4[id]!</label>
+		</transition>
+		<transition>
+			<source ref="id5"/>
+			<target ref="id5"/>
+			<label kind="guard" x="425" y="-272">fuel[id] == medium &amp;&amp;
+x &gt;= 10 &amp;&amp; x &lt;= 20</label>
+			<label kind="synchronisation" x="459" y="-212">e_sync17[id]!</label>
+			<label kind="assignment" x="425" y="-238">fuel[id]:= low, x:=0</label>
+			<nail x="561" y="-170"/>
+			<nail x="561" y="-212"/>
+			<nail x="425" y="-212"/>
+		</transition>
+		<transition>
+			<source ref="id5"/>
+			<target ref="id5"/>
+			<label kind="guard" x="280" y="-272">fuel[id] == high &amp;&amp;
+x &gt;= 10 &amp;&amp; x &lt;= 15</label>
+			<label kind="synchronisation" x="297" y="-212">e_sync18[id]!</label>
+			<label kind="assignment" x="255" y="-238">fuel[id]:= medium, x:=0</label>
+			<nail x="255" y="-212"/>
+			<nail x="391" y="-212"/>
+		</transition>
+		<transition>
+			<source ref="id0"/>
+			<target ref="id15"/>
+			<label kind="guard" x="603" y="-382">flag==false</label>
+			<label kind="synchronisation" x="603" y="-365">HPQ_LP[id]?</label>
+			<label kind="assignment" x="612" y="-348">f8[id]=1,
+flag=true</label>
+			<nail x="535" y="-314"/>
+			<nail x="535" y="-357"/>
+			<nail x="595" y="-357"/>
+		</transition>
+		<transition>
+			<source ref="id5"/>
+			<target ref="id12"/>
+			<label kind="guard" x="450" y="-51">flag==false</label>
+			<label kind="synchronisation" x="450" y="-102">LPQ_LP[id]?</label>
+			<label kind="assignment" x="450" y="-85">f5[id]=1,
+flag=true</label>
+			<nail x="442" y="-102"/>
+			<nail x="442" y="-25"/>
+			<nail x="569" y="-25"/>
+		</transition>
+		<transition>
+			<source ref="id0"/>
+			<target ref="id0"/>
+			<label kind="guard" x="425" y="-433">fuel[id] == medium &amp;&amp;
+x &gt;= 5 &amp;&amp; x &lt;= 10</label>
+			<label kind="synchronisation" x="425" y="-374">e_sync20[id]!</label>
+			<label kind="assignment" x="434" y="-399">fuel[id]:= low, x:=0</label>
+			<nail x="527" y="-331"/>
+			<nail x="527" y="-374"/>
+			<nail x="408" y="-374"/>
+			<nail x="408" y="-340"/>
+		</transition>
+		<transition>
+			<source ref="id0"/>
+			<target ref="id4"/>
+			<label kind="guard" x="595" y="-247">Runway_busy &amp;&amp;
+Lan_per[id]</label>
+			<label kind="synchronisation" x="595" y="-204">e_sync19[id]!</label>
+			<label kind="assignment" x="595" y="-179">LQ_per[id]:=false,
+deHPqueue()</label>
+			<nail x="459" y="-272"/>
+			<nail x="586" y="-272"/>
+			<nail x="586" y="8"/>
+		</transition>
+		<transition>
+			<source ref="id6"/>
+			<target ref="id5"/>
+			<label kind="guard" x="8" y="-255">LQ_per[id] &amp;&amp; Perm_Given[id]
+&amp;&amp; fuel[id] == high &amp;&amp; 
+not High_Risk[id]</label>
+			<label kind="synchronisation" x="136" y="-212">e_sync8[id]!</label>
+			<label kind="assignment" x="8" y="-187">Perm_Given[id]:=false ,
+enLPqueue(id), x:=0</label>
+			<nail x="88" y="-186"/>
+			<nail x="229" y="-187"/>
+		</transition>
+		<transition>
+			<source ref="id0"/>
+			<target ref="id16"/>
+			<label kind="select" x="-170" y="-408">HP_index:id_t</label>
+			<label kind="guard" x="-17" y="-433">not Lan_per[id] &amp;&amp; fuel[id] == low &amp;&amp;
+HP_index == Em_deHPqu_idx(id) &amp;&amp; flag==false</label>
+			<label kind="synchronisation" x="-399" y="-408">ELR_HPQ[id]!</label>
+			<label kind="assignment" x="-399" y="-383">Em_deHPqueue(HP_index), x:=0, 
+f9[id]=1, flag=true</label>
+			<nail x="374" y="-340"/>
+			<nail x="374" y="-391"/>
+			<nail x="-274" y="-388"/>
+			<nail x="-338" y="-388"/>
+			<nail x="-434" y="-388"/>
+			<nail x="-433" y="-272"/>
+			<nail x="-433" y="-136"/>
+			<nail x="-433" y="34"/>
+		</transition>
+		<transition>
+			<source ref="id6"/>
+			<target ref="id0"/>
+			<label kind="guard" x="-8" y="-357">LQ_per[id] &amp;&amp; Perm_Given[id]
+&amp;&amp; fuel[id] != high &amp;&amp; High_Risk[id]</label>
+			<label kind="synchronisation" x="178" y="-306">e_sync10[id]!</label>
+			<label kind="assignment" x="221" y="-357">Perm_Given[id]:=false ,
+enHPqueue(id), x:=0</label>
+			<nail x="0" y="-280"/>
+			<nail x="0" y="-314"/>
+			<nail x="42" y="-314"/>
+			<nail x="59" y="-314"/>
+		</transition>
+		<transition>
+			<source ref="id6"/>
+			<target ref="id1"/>
+			<label kind="guard" x="-204" y="-93">not LQ_per[id] &amp;&amp; 
+Perm_Given[id]</label>
+			<label kind="synchronisation" x="-204" y="-42">e_sync6[id]!</label>
+			<label kind="assignment" x="-204" y="-59">Perm_Given[id]:= false</label>
+			<nail x="-212" y="-102"/>
+			<nail x="-212" y="0"/>
+		</transition>
+		<transition>
+			<source ref="id4"/>
+			<target ref="id2"/>
+			<label kind="guard" x="569" y="77">Gate_asn[id] &amp;&amp;
+Runway_busy &amp;&amp;
+Lan_per[id]</label>
+			<label kind="synchronisation" x="569" y="136">e_sync21[id]!</label>
+			<label kind="assignment" x="569" y="153">Gate_asn[id]:=false ,
+Runway_busy:=false,
+Lan_per[id]:=false</label>
+			<nail x="561" y="86"/>
+			<nail x="561" y="204"/>
+		</transition>
+		<transition>
+			<source ref="id4"/>
+			<target ref="id2"/>
+			<label kind="guard" x="314" y="77">Gate_asn[id] &amp;&amp; Runway_busy 
+&amp;&amp; Elan_per[id] &amp;&amp; Emergency_Prog</label>
+			<label kind="synchronisation" x="382" y="187">e_sync22[id]!</label>
+			<label kind="assignment" x="382" y="110">Gate_asn[id]:=false, 
+Runway_busy:=false,
+Elan_per[id]:=false, 
+Emergency_Prog:=false</label>
+			<nail x="467" y="204"/>
+		</transition>
+		<transition>
+			<source ref="id3"/>
+			<target ref="id1"/>
+			<label kind="guard" x="-255" y="25">not Elan_per[id]&amp;&amp;
+Perm_Given[id]</label>
+			<label kind="synchronisation" x="-221" y="76">e_sync7[id]!</label>
+			<label kind="assignment" x="-280" y="59">Perm_Given[id]:= false</label>
+			<nail x="-136" y="127"/>
+		</transition>
+		<transition>
+			<source ref="id5"/>
+			<target ref="id13"/>
+			<label kind="select" x="68" y="-119">LP_index:id_t</label>
+			<label kind="guard" x="68" y="-102">not Lan_per[id] &amp;&amp;
+fuel[id]== low &amp;&amp; 
+LP_index==Em_deLPqu_idx(id)
+&amp;&amp; flag==false</label>
+			<label kind="synchronisation" x="68" y="-25">ELR_LPQ[id]!</label>
+			<label kind="assignment" x="68" y="-8">Em_deLPqueue(LP_index),
+f6[id]=1,flag=true</label>
+			<nail x="59" y="-136"/>
+		</transition>
+		<transition>
+			<source ref="id7"/>
+			<target ref="id8"/>
+			<label kind="guard" x="-383" y="118">flag==false</label>
+			<label kind="synchronisation" x="-383" y="135">ELR[id]!</label>
+			<label kind="assignment" x="-383" y="152">f2[id]=1, flag=true</label>
+			<nail x="-399" y="111"/>
+			<nail x="-399" y="145"/>
+			<nail x="-399" y="179"/>
+			<nail x="-314" y="179"/>
+			<nail x="-272" y="179"/>
+		</transition>
+		<transition>
+			<source ref="id3"/>
+			<target ref="id4"/>
+			<label kind="guard" x="68" y="102">Perm_Given[id] &amp;&amp; 
+Runway_busy &amp;&amp;
+Elan_per[id] &amp;&amp; 
+Emergency_Prog</label>
+			<label kind="synchronisation" x="187" y="161">e_sync9[id]!</label>
+			<label kind="assignment" x="68" y="187">Perm_Given[id]:=false</label>
+			<nail x="-51" y="187"/>
+			<nail x="306" y="187"/>
+		</transition>
+		<transition>
+			<source ref="id5"/>
+			<target ref="id4"/>
+			<label kind="guard" x="297" y="-102">Runway_busy &amp;&amp;
+Lan_per[id]</label>
+			<label kind="synchronisation" x="348" y="-25">e_sync13[id]!</label>
+			<label kind="assignment" x="297" y="-59">LQ_per[id]:=false,
+deLPqueue()</label>
+			<nail x="408" y="-102"/>
+		</transition>
+		<transition>
+			<source ref="id7"/>
+			<target ref="id9"/>
+			<label kind="select" x="-391" y="-272">fp:fstate, br:boo</label>
+			<label kind="guard" x="-391" y="-246">br == false imply fp == 2 &amp;&amp;
+fp == 2 imply br == false
+&amp;&amp; flag==false</label>
+			<label kind="synchronisation" x="-391" y="-102">LR[id]!</label>
+			<label kind="assignment" x="-391" y="-178">High_Risk[id]:=((br== false imply fp==2)
+&amp;&amp; (fp==2 imply br== false)? false:true), 
+fuel[id]:=fp, f1[id]=1, flag=true,
+fp_=fp, br_=br</label>
+			<nail x="-399" y="-51"/>
+			<nail x="-399" y="-102"/>
+			<nail x="-399" y="-187"/>
+		</transition>
+	</template>
+	<template>
+		<name>M3_Controller</name>
+		<declaration>int s;
+id_t front_HP(){  // To have access to the first element in the queue
+
+ return HPqueue [0];
+
+}
+id_t front_LP(){  // To have access to the first element in the queue
+
+ return LPqueue [0];
+
+}
+
+
+
+
+
+
+
+
+
+
+</declaration>
+		<location id="id17" x="-17608" y="-4272">
+		</location>
+		<location id="id18" x="-17654" y="-4411">
+			<urgent/>
+		</location>
+		<location id="id19" x="-17705" y="-4386">
+			<urgent/>
+		</location>
+		<location id="id20" x="-17484" y="-4224">
+			<urgent/>
+		</location>
+		<location id="id21" x="-17527" y="-4216">
+			<urgent/>
+		</location>
+		<location id="id22" x="-17790" y="-4318">
+			<urgent/>
+		</location>
+		<location id="id23" x="-17799" y="-4207">
+			<urgent/>
+		</location>
+		<location id="id24" x="-17705" y="-4131">
+			<urgent/>
+		</location>
+		<location id="id25" x="-17459" y="-4343">
+			<urgent/>
+		</location>
+		<location id="id26" x="-17518" y="-4369">
+			<urgent/>
+		</location>
+		<init ref="id17"/>
+		<transition>
+			<source ref="id25"/>
+			<target ref="id17"/>
+			<label kind="synchronisation" x="-17561" y="-4309">c_sync8!</label>
+		</transition>
+		<transition>
+			<source ref="id24"/>
+			<target ref="id17"/>
+			<label kind="synchronisation" x="-17663" y="-4182">c_sync7!</label>
+		</transition>
+		<transition>
+			<source ref="id23"/>
+			<target ref="id17"/>
+			<label kind="synchronisation" x="-17739" y="-4233">c_sync6!</label>
+		</transition>
+		<transition>
+			<source ref="id26"/>
+			<target ref="id17"/>
+			<label kind="synchronisation" x="-17569" y="-4352">c_sync9!</label>
+		</transition>
+		<transition>
+			<source ref="id22"/>
+			<target ref="id17"/>
+			<label kind="synchronisation" x="-17773" y="-4301">c_sync5!</label>
+		</transition>
+		<transition>
+			<source ref="id21"/>
+			<target ref="id17"/>
+			<label kind="synchronisation" x="-17595" y="-4241">c_sync4!</label>
+		</transition>
+		<transition>
+			<source ref="id20"/>
+			<target ref="id17"/>
+			<label kind="synchronisation" x="-17552" y="-4258">c_sync3!</label>
+		</transition>
+		<transition>
+			<source ref="id19"/>
+			<target ref="id17"/>
+			<label kind="synchronisation" x="-17688" y="-4343">c_sync2!</label>
+		</transition>
+		<transition>
+			<source ref="id18"/>
+			<target ref="id17"/>
+			<label kind="synchronisation" x="-17680" y="-4386">c_sync1!</label>
+		</transition>
+		<transition>
+			<source ref="id17"/>
+			<target ref="id18"/>
+			<label kind="select" x="-17612" y="-4411">p:id_t</label>
+			<label kind="synchronisation" x="-17612" y="-4394">LR[p]?</label>
+			<label kind="assignment" x="-17612" y="-4377">g1=1,
+p_=p</label>
+			<nail x="-17586" y="-4318"/>
+			<nail x="-17544" y="-4411"/>
+			<nail x="-17595" y="-4411"/>
+		</transition>
+		<transition>
+			<source ref="id17"/>
+			<target ref="id20"/>
+			<label kind="select" x="-17467" y="-4258">p:id_t</label>
+			<label kind="synchronisation" x="-17408" y="-4250">ELR[p]?</label>
+			<label kind="assignment" x="-17416" y="-4233">g3=1, p_=p</label>
+			<nail x="-17425" y="-4267"/>
+			<nail x="-17433" y="-4216"/>
+		</transition>
+		<transition>
+			<source ref="id17"/>
+			<target ref="id22"/>
+			<label kind="select" x="-17782" y="-4267">p:id_t</label>
+			<label kind="guard" x="-18071" y="-4326">not Runway_busy &amp;&amp;
+not Lan_per[p] &amp;&amp; not Emergency_Prog &amp;&amp; 
+(counter&lt;=3 or lenL==0) &amp;&amp; p==front_HP()</label>
+			<label kind="synchronisation" x="-17867" y="-4250">HPQ_LP[p]!</label>
+			<label kind="assignment" x="-18071" y="-4267">Runway_busy:=true, Lan_per[p]:= true,
+counter++, g5=1, p_=p</label>
+			<nail x="-17790" y="-4233"/>
+			<nail x="-17790" y="-4267"/>
+		</transition>
+		<transition>
+			<source ref="id17"/>
+			<target ref="id23"/>
+			<label kind="select" x="-17773" y="-4207">p:id_t</label>
+			<label kind="guard" x="-18071" y="-4182">not Runway_busy &amp;&amp; not Lan_per[p] &amp;&amp; 
+not Emergency_Prog &amp;&amp;
+(counter&gt;=3 or lenH==0)&amp;&amp; p== front_LP()</label>
+			<label kind="synchronisation" x="-17773" y="-4190">LPQ_LP[p]!</label>
+			<label kind="assignment" x="-18071" y="-4122">Runway_busy:=true, Lan_per[p]:= true,
+counter:=0, g6=1, p_=p</label>
+			<nail x="-17731" y="-4131"/>
+			<nail x="-17756" y="-4156"/>
+		</transition>
+		<transition>
+			<source ref="id17"/>
+			<target ref="id21"/>
+			<label kind="select" x="-17569" y="-4190">p:id_t,
+bb:boo</label>
+			<label kind="guard" x="-17484" y="-4165">not Runway_busy&amp;&amp;
+not Elan_per[p] 
+&amp;&amp; not Perm_Given[p] &amp;&amp; 
+not(bb==Emergency_Prog)</label>
+			<label kind="synchronisation" x="-17484" y="-4182">ELP[p]!</label>
+			<label kind="assignment" x="-17535" y="-4088">Elan_per[p]:= bb, Perm_Given[p]:=true,
+Emergency_Prog:= true, Runway_busy:=true, g4=1,
+p_=p, bb_=bb</label>
+			<nail x="-17569" y="-4131"/>
+			<nail x="-17485" y="-4173"/>
+		</transition>
+		<transition>
+			<source ref="id17"/>
+			<target ref="id19"/>
+			<label kind="select" x="-17781" y="-4386">p:id_t,
+bb:boo</label>
+			<label kind="guard" x="-18062" y="-4548">not Perm_Given[p] &amp;&amp; (Emergency_Prog imply bb==false) &amp;&amp; (((lenH &gt;= Max_Queue_Size and High_Risk[p])
+or (lenL &gt;= Max_Queue_Size and not High_Risk[p])) imply bb==false) &amp;&amp; 
+(bb== false imply ((lenH &gt;= Max_Queue_Size and High_Risk[p])
+or (lenL &gt;= Max_Queue_Size and not High_Risk[p]))) &amp;&amp; (((lenH &gt;= Max_Queue_Size and fuel[p]!=high) 
+or ( lenL &gt;= Max_Queue_Size and fuel[p]==high)) imply 
+bb==false) &amp;&amp;  (bb==false imply ((lenH &gt;= Max_Queue_Size and fuel[p]!=high) 
+or ( lenL &gt;= Max_Queue_Size and fuel[p]==high)))</label>
+			<label kind="synchronisation" x="-17756" y="-4352">LQ[p]!</label>
+			<label kind="assignment" x="-17943" y="-4412">Perm_Given[p]:= true,
+LQ_per[p]:=bb, g2=1,
+p_=p, bb_=bb</label>
+			<nail x="-17790" y="-4344"/>
+			<nail x="-17790" y="-4386"/>
+		</transition>
+		<transition>
+			<source ref="id17"/>
+			<target ref="id26"/>
+			<label kind="select" x="-17501" y="-4394">p:id_t</label>
+			<label kind="synchronisation" x="-17467" y="-4411">ELR_HPQ[p]?</label>
+			<label kind="assignment" x="-17425" y="-4394">g9=1, p_=p</label>
+			<nail x="-17442" y="-4377"/>
+			<nail x="-17484" y="-4411"/>
+		</transition>
+		<transition>
+			<source ref="id17"/>
+			<target ref="id25"/>
+			<label kind="select" x="-17485" y="-4326">p:id_t</label>
+			<label kind="synchronisation" x="-17417" y="-4334">ELR_LPQ[p]?</label>
+			<label kind="assignment" x="-17417" y="-4317">g8=1, p_=p</label>
+			<nail x="-17425" y="-4284"/>
+			<nail x="-17425" y="-4343"/>
+		</transition>
+		<transition>
+			<source ref="id17"/>
+			<target ref="id24"/>
+			<label kind="select" x="-17663" y="-4165">p:id_t</label>
+			<label kind="guard" x="-17705" y="-4105">not Gate_asn[p] 
+&amp;&amp; Runway_busy</label>
+			<label kind="synchronisation" x="-17663" y="-4148">GG[p]!</label>
+			<label kind="assignment" x="-17790" y="-4063">Gate_asn[p]:= true, g7=1, p_=p</label>
+			<nail x="-17595" y="-4139"/>
+			<nail x="-17595" y="-4114"/>
+		</transition>
+	</template>
+	<template>
+		<name x="5" y="5">M3_Planes_</name>
+		<parameter>const id_t_ id</parameter>
+		<declaration>
+// Place local declarations here.
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ //    ***********************   High Priority Queue  removing element in emergancy situation******************
+//    ***********************   Low Priority Queue  removing element in emergancy situation******************
+clock x_;
+    
+void enHPqueue_(id_t_ element_)
+{
+   HPqueue_ [lenH_++]=element_;
+ }
+ void enLPqueue_(id_t_ element_)
+ {
+   LPqueue_ [lenL_++]=element_;
+  }
+void deHPqueue_()   // normal_ dequeue_ happens_ from_ High_ priority_ Queue_
+{
+        int i_ = 0;
+        --lenH_;
+        while (i_ &lt; lenH_)
+        {
+                HPqueue_[i_] = HPqueue_[i_ + 1];
+                i_++;
+        }
+        HPqueue_[i_] = 0;
+}
+void deLPqueue_()    // normal_ dequeue_ happens_ from_ Low_ priority_ Queue_
+{
+        int i_ = 0;
+        --lenL_;
+        while (i_ &lt; lenL_)
+        {
+                LPqueue_[i_] = LPqueue_[i_ + 1];
+                i_++;
+        }
+        LPqueue_[i_] = 0;
+}
+id_t_ Em_deHPqu_idx_(id_t_ plane_ )   // dequeue_ happens_ when_ plane_ send_ emergancy_ landing_ while_ it_ is_ in_ queue_, we_ want_ to_ know_ its_ position_ in_ the_ queue_ ### ELR_HPQ_ ###
+{       
+        int i_=0;
+      while (HPqueue_[i_] != plane_)
+  {
+        i_++;
+       
+   }
+    return i_;
+   }
+void Em_deHPqueue_(id_t_ i_ )   // dequeue_ happens_ when_ plane_ send_ emergancy_ landing_ while_ it_ is_ in_ queue_ we_ remove_ the_ plane_ based_ on_ its_ position_ in_ the_ queue_ ### ELR_HPQ_ ###
+{       
+    
+        --lenH_;
+        while (i_ &lt; lenH_)
+        {
+                HPqueue_[i_] = HPqueue_[i_ + 1];
+                i_++;
+        }
+        HPqueue_[i_] = 0;
+}
+   
+id_t_ Em_deLPqu_idx_(id_t_ plane_ )   // dequeue_ happens_ when_ plane_ send_ emergancy_ landing_ while_ it_ is_ in_ queue_ but_ we_ want_ to_ know_ its_ position_ in_ the_ queue_ ### ELR_HPQ_ ###
+{       
+     int i_=0;
+      while (LPqueue_[i_] != plane_)
+  {
+         i_++;
+   }
+    return i_;
+   }
+void Em_deLPqueue_(id_t_ i_)  //  dequeue_ happens_ when_ plane_ send_ emergancy_ landing_ while_ it_ is_ in_ queue_ we_ remove_ the_ plane_ based_ on_ its_ position_ in_ the_ queue_ ### ELR_LPQ_ ###
+{
+   
+       --lenL_;
+        while (i_ &lt; lenL_)
+       
+        {
+                LPqueue_[i_] = LPqueue_[i_ + 1];
+                i_++;
+                
+        }
+        LPqueue_[i_] = 0;
+} </declaration>
+		<location id="id27" x="401" y="-289">
+			<name x="331" y="-289">High_PQ</name>
+			<label kind="invariant" x="382" y="-280">x_&lt;=10</label>
+		</location>
+		<location id="id28" x="467" y="272">
+			<name x="450" y="280">At_Gate</name>
+		</location>
+		<location id="id29" x="-70" y="247">
+			<name x="-187" y="204">Waiting_EmergLand</name>
+			<urgent/>
+		</location>
+		<location id="id30" x="407" y="128">
+			<name x="433" y="110">Landing_Runway</name>
+			<urgent/>
+		</location>
+		<location id="id31" x="323" y="-76">
+			<name x="298" y="-119">Low_PQ</name>
+			<label kind="invariant" x="297" y="-68">x_&lt;=20</label>
+		</location>
+		<location id="id32" x="-68" y="-161">
+			<name x="-170" y="-204">Waiting_L_Permission</name>
+			<urgent/>
+		</location>
+		<location id="id33" x="-391" y="85">
+			<name x="-408" y="51">In_Air</name>
+			<label kind="invariant" x="-408" y="94">x_ &lt;=20</label>
+		</location>
+		<location id="id34" x="-264" y="247">
+			<committed/>
+		</location>
+		<location id="id35" x="-195" y="-161">
+			<committed/>
+		</location>
+		<location id="id36" x="-272" y="-8">
+			<urgent/>
+		</location>
+		<location id="id37" x="-272" y="178">
+			<urgent/>
+		</location>
+		<location id="id38" x="-144" y="-289">
+			<urgent/>
+		</location>
+		<location id="id39" x="-120" y="323">
+			<urgent/>
+		</location>
+		<location id="id40" x="-68" y="-255">
+			<committed/>
+		</location>
+		<location id="id41" x="-230" y="323">
+			<committed/>
+		</location>
+		<location id="id42" x="-68" y="25">
+			<name x="-187" y="8">Leaving_Airport</name>
+		</location>
+		<location id="id43" x="501" y="34">
+			<urgent/>
+		</location>
+		<location id="id44" x="501" y="-76">
+			<committed/>
+		</location>
+		<location id="id45" x="59" y="119">
+			<committed/>
+		</location>
+		<location id="id46" x="153" y="-76">
+			<urgent/>
+		</location>
+		<location id="id47" x="102" y="144">
+			<urgent/>
+		</location>
+		<location id="id48" x="102" y="59">
+			<committed/>
+		</location>
+		<location id="id49" x="569" y="-340">
+			<urgent/>
+		</location>
+		<location id="id50" x="569" y="-272">
+			<committed/>
+		</location>
+		<location id="id51" x="136" y="-365">
+			<urgent/>
+		</location>
+		<location id="id52" x="-425" y="314">
+			<committed/>
+		</location>
+		<init ref="id33"/>
+		<transition>
+			<source ref="id52"/>
+			<target ref="id29"/>
+			<label kind="synchronisation" x="-382" y="280">e_sync16[id]?</label>
+			<label kind="assignment" x="-382" y="297">flag=false</label>
+			<nail x="-263" y="314"/>
+			<nail x="-263" y="272"/>
+		</transition>
+		<transition>
+			<source ref="id27"/>
+			<target ref="id51"/>
+			<label kind="guard" x="178" y="-391">f9[id]==1</label>
+			<label kind="assignment" x="178" y="-365">f9[id]=0</label>
+			<nail x="280" y="-306"/>
+			<nail x="280" y="-365"/>
+		</transition>
+		<transition>
+			<source ref="id50"/>
+			<target ref="id27"/>
+			<label kind="synchronisation" x="467" y="-297">e_sync15[id]?</label>
+			<label kind="assignment" x="450" y="-272">flag=false, x_:=0</label>
+			<nail x="442" y="-272"/>
+		</transition>
+		<transition>
+			<source ref="id27"/>
+			<target ref="id49"/>
+			<label kind="guard" x="493" y="-340">f8[id]==1</label>
+			<label kind="assignment" x="493" y="-323">f8[id]=0</label>
+			<nail x="467" y="-289"/>
+			<nail x="467" y="-340"/>
+		</transition>
+		<transition>
+			<source ref="id49"/>
+			<target ref="id50"/>
+			<label kind="synchronisation" x="578" y="-314">HPQ_LP_[id]?</label>
+		</transition>
+		<transition>
+			<source ref="id48"/>
+			<target ref="id30"/>
+			<label kind="synchronisation" x="119" y="34">e_sync14[id]?</label>
+			<label kind="assignment" x="127" y="59">flag=false</label>
+			<nail x="229" y="59"/>
+			<nail x="229" y="85"/>
+		</transition>
+		<transition>
+			<source ref="id30"/>
+			<target ref="id47"/>
+			<label kind="guard" x="144" y="119">f7[id]==1</label>
+			<label kind="assignment" x="204" y="119">f7[id]=0</label>
+			<nail x="246" y="144"/>
+		</transition>
+		<transition>
+			<source ref="id47"/>
+			<target ref="id48"/>
+			<label kind="synchronisation" x="110" y="93">GG_[id]?</label>
+		</transition>
+		<transition>
+			<source ref="id31"/>
+			<target ref="id30"/>
+			<label kind="guard" x="246" y="-42">Runway_busy_ &amp;&amp;
+Lan_per_[id]</label>
+			<label kind="synchronisation" x="246" y="0">e_sync13[id]?</label>
+			<label kind="assignment" x="246" y="25">LQ_per_[id]:=false,
+deLPqueue_()</label>
+			<nail x="323" y="59"/>
+		</transition>
+		<transition>
+			<source ref="id45"/>
+			<target ref="id29"/>
+			<label kind="synchronisation" x="-8" y="136">e_sync11[id]?</label>
+			<label kind="assignment" x="-8" y="153">flag=false</label>
+			<nail x="-8" y="119"/>
+		</transition>
+		<transition>
+			<source ref="id31"/>
+			<target ref="id46"/>
+			<label kind="guard" x="204" y="-93">f6[id]==1</label>
+			<label kind="assignment" x="204" y="-76">f6[id]=0</label>
+		</transition>
+		<transition>
+			<source ref="id44"/>
+			<target ref="id31"/>
+			<label kind="synchronisation" x="374" y="-76">e_sync12[id]?</label>
+			<label kind="assignment" x="374" y="-59">x_:=0, flag=false</label>
+		</transition>
+		<transition>
+			<source ref="id43"/>
+			<target ref="id44"/>
+			<label kind="synchronisation" x="408" y="-25">LPQ_LP_[id]?</label>
+		</transition>
+		<transition>
+			<source ref="id31"/>
+			<target ref="id43"/>
+			<label kind="guard" x="391" y="8">f5[id]==1</label>
+			<label kind="assignment" x="391" y="34">f5[id]=0</label>
+			<nail x="374" y="-25"/>
+			<nail x="374" y="34"/>
+		</transition>
+		<transition>
+			<source ref="id41"/>
+			<target ref="id29"/>
+			<label kind="synchronisation" x="-221" y="280">e_sync3[id]?</label>
+			<label kind="assignment" x="-161" y="263">flag=false</label>
+			<nail x="-229" y="280"/>
+		</transition>
+		<transition>
+			<source ref="id39"/>
+			<target ref="id41"/>
+			<label kind="synchronisation" x="-195" y="297">ELP_[id]?</label>
+		</transition>
+		<transition>
+			<source ref="id40"/>
+			<target ref="id32"/>
+			<label kind="synchronisation" x="-110" y="-238">e_sync2[id]?</label>
+			<label kind="assignment" x="-110" y="-221">flag=false</label>
+		</transition>
+		<transition>
+			<source ref="id29"/>
+			<target ref="id39"/>
+			<label kind="guard" x="-60" y="289">f4[id]==1</label>
+			<label kind="assignment" x="-60" y="306">f4[id]=0</label>
+			<nail x="-69" y="323"/>
+		</transition>
+		<transition>
+			<source ref="id38"/>
+			<target ref="id40"/>
+			<label kind="synchronisation" x="-127" y="-289">LQ_[id]?</label>
+			<nail x="-68" y="-289"/>
+		</transition>
+		<transition>
+			<source ref="id32"/>
+			<target ref="id38"/>
+			<label kind="guard" x="-187" y="-263">f3[id]==1</label>
+			<label kind="assignment" x="-187" y="-246">f3[id]=0</label>
+			<nail x="-195" y="-229"/>
+			<nail x="-195" y="-289"/>
+		</transition>
+		<transition>
+			<source ref="id33"/>
+			<target ref="id37"/>
+			<label kind="guard" x="-340" y="119">f2[id]==1</label>
+			<label kind="assignment" x="-340" y="136">f2[id]=0</label>
+			<nail x="-272" y="110"/>
+		</transition>
+		<transition>
+			<source ref="id33"/>
+			<target ref="id36"/>
+			<label kind="guard" x="-340" y="8">f1[id]==1</label>
+			<label kind="assignment" x="-340" y="25">f1[id]=0</label>
+			<nail x="-272" y="68"/>
+		</transition>
+		<transition>
+			<source ref="id35"/>
+			<target ref="id32"/>
+			<label kind="synchronisation" x="-178" y="-178">e_sync5[id]?</label>
+			<label kind="assignment" x="-169" y="-161">flag=false</label>
+		</transition>
+		<transition>
+			<source ref="id34"/>
+			<target ref="id29"/>
+			<label kind="synchronisation" x="-246" y="230">e_sync4[id]?</label>
+			<label kind="assignment" x="-162" y="230">flag=false</label>
+		</transition>
+		<transition>
+			<source ref="id31"/>
+			<target ref="id31"/>
+			<label kind="guard" x="332" y="-170">fuel_[id] == medium_ &amp;&amp;
+x_ &gt;= 10 &amp;&amp; x_ &lt;= 20</label>
+			<label kind="synchronisation" x="365" y="-102">e_sync17[id]?</label>
+			<label kind="assignment" x="357" y="-136">fuel_[id]:= low_, x_:=0</label>
+			<nail x="467" y="-85"/>
+			<nail x="467" y="-110"/>
+			<nail x="357" y="-110"/>
+		</transition>
+		<transition>
+			<source ref="id31"/>
+			<target ref="id31"/>
+			<label kind="guard" x="263" y="-229">fuel_[id] == high_ &amp;&amp;
+x_ &gt;= 10 &amp;&amp; x_ &lt;= 15</label>
+			<label kind="synchronisation" x="229" y="-170">e_sync18[id]?</label>
+			<label kind="assignment" x="255" y="-195">fuel_[id]:= medium_, x_:=0</label>
+			<nail x="204" y="-170"/>
+			<nail x="323" y="-170"/>
+		</transition>
+		<transition>
+			<source ref="id27"/>
+			<target ref="id27"/>
+			<label kind="guard" x="331" y="-391">fuel_[id] == medium_ &amp;&amp;
+x_ &gt;= 5 &amp;&amp; x_ &lt;= 10</label>
+			<label kind="synchronisation" x="348" y="-323">e_sync20[id]?</label>
+			<label kind="assignment" x="314" y="-348">fuel_[id]:= low_, x_:=0</label>
+			<nail x="459" y="-314"/>
+			<nail x="459" y="-348"/>
+			<nail x="306" y="-348"/>
+			<nail x="306" y="-314"/>
+		</transition>
+		<transition>
+			<source ref="id27"/>
+			<target ref="id30"/>
+			<label kind="guard" x="535" y="-187">Runway_busy_ &amp;&amp;
+Lan_per_[id]</label>
+			<label kind="synchronisation" x="527" y="-204">e_sync19[id]?</label>
+			<label kind="assignment" x="537" y="-153">LQ_per_[id]:=false,
+deHPqueue_()</label>
+			<nail x="399" y="-238"/>
+			<nail x="527" y="-238"/>
+			<nail x="527" y="59"/>
+		</transition>
+		<transition>
+			<source ref="id32"/>
+			<target ref="id31"/>
+			<label kind="guard" x="42" y="-204">LQ_per_[id] &amp;&amp; Perm_Given_[id]
+&amp;&amp; fuel_[id] == high_ &amp;&amp; 
+not High_Risk_[id]</label>
+			<label kind="synchronisation" x="-42" y="-161">e_sync8[id]?</label>
+			<label kind="assignment" x="42" y="-153">Perm_Given_[id]:=false ,
+enLPqueue_(id), x_:=0</label>
+			<nail x="195" y="-161"/>
+			<nail x="195" y="-119"/>
+		</transition>
+		<transition>
+			<source ref="id51"/>
+			<target ref="id52"/>
+			<label kind="select" x="-289" y="-382">HP_index_:id_t_</label>
+			<label kind="guard" x="-144" y="-382">not Lan_per_[id] &amp;&amp; fuel_[id] == low_ &amp;&amp;
+HP_index_ == Em_deHPqu_idx_(id)</label>
+			<label kind="synchronisation" x="-399" y="-382">ELR_HPQ_[id]!</label>
+			<label kind="assignment" x="-399" y="-357">Em_deHPqueue_(HP_index_), x_:=0</label>
+			<nail x="42" y="-365"/>
+			<nail x="-42" y="-365"/>
+			<nail x="-265" y="-361"/>
+			<nail x="-329" y="-361"/>
+			<nail x="-425" y="-361"/>
+			<nail x="-425" y="-297"/>
+			<nail x="-425" y="-195"/>
+			<nail x="-425" y="59"/>
+		</transition>
+		<transition>
+			<source ref="id32"/>
+			<target ref="id27"/>
+			<label kind="guard" x="-25" y="-323">LQ_per_[id] 
+&amp;&amp; Perm_Given_[id]
+&amp;&amp; fuel_[id] != high_
+&amp;&amp; High_Risk_[id]</label>
+			<label kind="synchronisation" x="136" y="-280">e_sync10[id]?</label>
+			<label kind="assignment" x="110" y="-331">Perm_Given_[id]:=false ,
+enHPqueue_(id), x_:=0</label>
+			<nail x="85" y="-238"/>
+			<nail x="102" y="-255"/>
+			<nail x="102" y="-280"/>
+			<nail x="102" y="-289"/>
+		</transition>
+		<transition>
+			<source ref="id32"/>
+			<target ref="id42"/>
+			<label kind="guard" x="-221" y="-85">not LQ_per_[id] &amp;&amp; 
+Perm_Given_[id]</label>
+			<label kind="synchronisation" x="-153" y="-34">e_sync6[id]?</label>
+			<label kind="assignment" x="-221" y="-51">Perm_Given_[id]:= false</label>
+			<nail x="-68" y="-51"/>
+			<nail x="-68" y="-25"/>
+		</transition>
+		<transition>
+			<source ref="id30"/>
+			<target ref="id28"/>
+			<label kind="guard" x="509" y="145">Gate_asn_[id] &amp;&amp;
+Runway_busy_ &amp;&amp;
+Lan_per_[id]</label>
+			<label kind="synchronisation" x="510" y="204">e_sync21[id]?</label>
+			<label kind="assignment" x="510" y="221">Gate_asn_[id]:=false ,
+Runway_busy_:=false,
+Lan_per_[id]:=false</label>
+			<nail x="501" y="153"/>
+			<nail x="501" y="272"/>
+		</transition>
+		<transition>
+			<source ref="id30"/>
+			<target ref="id28"/>
+			<label kind="guard" x="254" y="145">Gate_asn_[id] &amp;&amp; Runway_busy_ 
+&amp;&amp; Elan_per_[id] &amp;&amp; Emergency_Prog_</label>
+			<label kind="synchronisation" x="314" y="255">e_sync22[id]?</label>
+			<label kind="assignment" x="322" y="179">Gate_asn_[id]:=false, 
+Runway_busy_:=false,
+Elan_per_[id]:=false, 
+Emergency_Prog_:=false</label>
+			<nail x="408" y="272"/>
+		</transition>
+		<transition>
+			<source ref="id29"/>
+			<target ref="id42"/>
+			<label kind="guard" x="-221" y="76">not Elan_per_[id]&amp;&amp;
+Perm_Given_[id]</label>
+			<label kind="synchronisation" x="-161" y="127">e_sync7[id]?</label>
+			<label kind="assignment" x="-221" y="110">Perm_Given_[id]:= false</label>
+			<nail x="-68" y="85"/>
+		</transition>
+		<transition>
+			<source ref="id46"/>
+			<target ref="id45"/>
+			<label kind="select" x="-8" y="-68">LP_index_:id_t_</label>
+			<label kind="guard" x="-8" y="-51">not Lan_per_[id] &amp;&amp;
+fuel_[id]== low_ &amp;&amp; 
+LP_index_==Em_deLPqu_idx_(id)</label>
+			<label kind="synchronisation" x="-8" y="25">ELR_LPQ_[id]!</label>
+			<label kind="assignment" x="-8" y="8">Em_deLPqueue_(LP_index_)</label>
+			<nail x="-17" y="-76"/>
+			<nail x="-17" y="68"/>
+		</transition>
+		<transition>
+			<source ref="id37"/>
+			<target ref="id34"/>
+			<label kind="synchronisation" x="-375" y="204">ELR_[id]!</label>
+			<nail x="-316" y="179"/>
+			<nail x="-393" y="179"/>
+			<nail x="-393" y="247"/>
+			<nail x="-308" y="247"/>
+		</transition>
+		<transition>
+			<source ref="id29"/>
+			<target ref="id30"/>
+			<label kind="guard" x="51" y="170">Perm_Given_[id] &amp;&amp; 
+Runway_busy_ &amp;&amp;
+Elan_per_[id] &amp;&amp; 
+Emergency_Prog_</label>
+			<label kind="synchronisation" x="178" y="221">e_sync9[id]?</label>
+			<label kind="assignment" x="51" y="255">Perm_Given_[id]:=false</label>
+			<nail x="67" y="247"/>
+			<nail x="84" y="247"/>
+			<nail x="289" y="246"/>
+		</transition>
+		<transition>
+			<source ref="id36"/>
+			<target ref="id35"/>
+			<label kind="guard" x="-391" y="-204">br_ == false imply fp_ == 2 &amp;&amp;
+fp_ == 2 imply br_ == false</label>
+			<label kind="synchronisation" x="-399" y="-34">LR_[id]!</label>
+			<label kind="assignment" x="-399" y="-144">High_Risk_[id]:=((br_== false imply fp_==2)
+&amp;&amp; (fp_==2 imply br_== false)? false:true), 
+fuel_[id]:=fp_</label>
+			<nail x="-331" y="-8"/>
+			<nail x="-408" y="-8"/>
+			<nail x="-408" y="-161"/>
+		</transition>
+	</template>
+	<template>
+		<name>M3_Controller_</name>
+		<declaration>int s;
+id_t_ front_HP_(){  // To_ have_ access_ to_ the_ first_ element_ in_ the_ queue_
+ return HPqueue_ [0];
+}
+id_t_ front_LP_(){  // To_ have_ access_ to_ the_ first_ element_ in_ the_ queue_
+ return LPqueue_ [0];
+}</declaration>
+		<location id="id53" x="-17608" y="-4272">
+		</location>
+		<location id="id54" x="-17671" y="-4479">
+			<committed/>
+		</location>
+		<location id="id55" x="-17527" y="-4488">
+			<urgent/>
+		</location>
+		<location id="id56" x="-17918" y="-4386">
+			<urgent/>
+		</location>
+		<location id="id57" x="-17824" y="-4445">
+			<committed/>
+		</location>
+		<location id="id58" x="-17314" y="-4250">
+			<urgent/>
+		</location>
+		<location id="id59" x="-17382" y="-4182">
+			<committed/>
+		</location>
+		<location id="id60" x="-17569" y="-4097">
+			<urgent/>
+		</location>
+		<location id="id61" x="-17416" y="-4148">
+			<committed/>
+		</location>
+		<location id="id62" x="-17918" y="-4352">
+			<committed/>
+		</location>
+		<location id="id63" x="-17884" y="-4250">
+			<urgent/>
+		</location>
+		<location id="id64" x="-17909" y="-4216">
+			<committed/>
+		</location>
+		<location id="id65" x="-17790" y="-4122">
+			<urgent/>
+		</location>
+		<location id="id66" x="-17748" y="-4131">
+			<urgent/>
+		</location>
+		<location id="id67" x="-17603" y="-4097">
+			<committed/>
+		</location>
+		<location id="id68" x="-17476" y="-4479">
+			<committed/>
+		</location>
+		<location id="id69" x="-17374" y="-4428">
+			<urgent/>
+		</location>
+		<location id="id70" x="-17348" y="-4394">
+			<committed/>
+		</location>
+		<location id="id71" x="-17306" y="-4284">
+			<urgent/>
+		</location>
+		<init ref="id53"/>
+		<transition>
+			<source ref="id68"/>
+			<target ref="id53"/>
+			<label kind="synchronisation" x="-17527" y="-4403">c_sync9?</label>
+		</transition>
+		<transition>
+			<source ref="id53"/>
+			<target ref="id69"/>
+			<label kind="guard" x="-17442" y="-4437">g9==1</label>
+			<label kind="assignment" x="-17442" y="-4420">g9=0</label>
+		</transition>
+		<transition>
+			<source ref="id70"/>
+			<target ref="id53"/>
+			<label kind="synchronisation" x="-17467" y="-4335">c_sync8?</label>
+		</transition>
+		<transition>
+			<source ref="id53"/>
+			<target ref="id71"/>
+			<label kind="guard" x="-17433" y="-4301">g8==1</label>
+			<label kind="assignment" x="-17484" y="-4301">g8=0</label>
+		</transition>
+		<transition>
+			<source ref="id64"/>
+			<target ref="id53"/>
+			<label kind="synchronisation" x="-17799" y="-4241">c_sync6?</label>
+		</transition>
+		<transition>
+			<source ref="id53"/>
+			<target ref="id65"/>
+			<label kind="guard" x="-17773" y="-4199">g6==1</label>
+			<label kind="assignment" x="-17773" y="-4182">g6=0</label>
+		</transition>
+		<transition>
+			<source ref="id67"/>
+			<target ref="id53"/>
+			<label kind="synchronisation" x="-17671" y="-4148">c_sync7?</label>
+		</transition>
+		<transition>
+			<source ref="id53"/>
+			<target ref="id66"/>
+			<label kind="guard" x="-17671" y="-4216">g7==1</label>
+			<label kind="assignment" x="-17671" y="-4199">g7=0</label>
+		</transition>
+		<transition>
+			<source ref="id62"/>
+			<target ref="id53"/>
+			<label kind="synchronisation" x="-17850" y="-4318">c_sync5?</label>
+		</transition>
+		<transition>
+			<source ref="id53"/>
+			<target ref="id63"/>
+			<label kind="guard" x="-17841" y="-4292">g5==1</label>
+			<label kind="assignment" x="-17841" y="-4275">g5=0</label>
+		</transition>
+		<transition>
+			<source ref="id53"/>
+			<target ref="id60"/>
+			<label kind="guard" x="-17586" y="-4224">g4==1</label>
+			<label kind="assignment" x="-17578" y="-4207">g4=0</label>
+		</transition>
+		<transition>
+			<source ref="id61"/>
+			<target ref="id53"/>
+			<label kind="synchronisation" x="-17535" y="-4182">c_sync4?</label>
+		</transition>
+		<transition>
+			<source ref="id59"/>
+			<target ref="id53"/>
+			<label kind="synchronisation" x="-17442" y="-4224">c_sync3?</label>
+		</transition>
+		<transition>
+			<source ref="id53"/>
+			<target ref="id58"/>
+			<label kind="guard" x="-17459" y="-4258">g3==1</label>
+			<label kind="assignment" x="-17408" y="-4258">g3=0</label>
+		</transition>
+		<transition>
+			<source ref="id58"/>
+			<target ref="id59"/>
+			<label kind="synchronisation" x="-17348" y="-4207">ELR_[p_]?</label>
+		</transition>
+		<transition>
+			<source ref="id57"/>
+			<target ref="id53"/>
+			<label kind="synchronisation" x="-17799" y="-4437">c_sync2?</label>
+			<nail x="-17714" y="-4445"/>
+		</transition>
+		<transition>
+			<source ref="id53"/>
+			<target ref="id56"/>
+			<label kind="guard" x="-17824" y="-4386">g2==1</label>
+			<label kind="assignment" x="-17824" y="-4369">g2=0</label>
+			<nail x="-17697" y="-4309"/>
+		</transition>
+		<transition>
+			<source ref="id54"/>
+			<target ref="id53"/>
+			<label kind="synchronisation" x="-17646" y="-4454">c_sync1?</label>
+		</transition>
+		<transition>
+			<source ref="id53"/>
+			<target ref="id55"/>
+			<label kind="guard" x="-17603" y="-4428">g1==1</label>
+			<label kind="assignment" x="-17603" y="-4411">g1=0</label>
+		</transition>
+		<transition>
+			<source ref="id55"/>
+			<target ref="id54"/>
+			<label kind="synchronisation" x="-17620" y="-4479">LR_[p_]?</label>
+		</transition>
+		<transition>
+			<source ref="id63"/>
+			<target ref="id62"/>
+			<label kind="guard" x="-18241" y="-4352">not Runway_busy_ &amp;&amp;
+not Lan_per_[p_] &amp;&amp; not Emergency_Prog_ &amp;&amp; 
+(counter_&lt;=3 or lenL_==0) &amp;&amp; p_==front_HP_()</label>
+			<label kind="synchronisation" x="-18139" y="-4267">HPQ_LP_[p_]!</label>
+			<label kind="assignment" x="-18241" y="-4292">Runway_busy_:=true, Lan_per_[p_]:= true,
+counter_++</label>
+			<nail x="-17918" y="-4250"/>
+			<nail x="-17918" y="-4326"/>
+		</transition>
+		<transition>
+			<source ref="id65"/>
+			<target ref="id64"/>
+			<label kind="guard" x="-18232" y="-4165">not Runway_busy_ &amp;&amp; not Lan_per_[p_] &amp;&amp; 
+not Emergency_Prog_ &amp;&amp;
+(counter_&gt;=3 or lenH_==0)&amp;&amp; p_== front_LP_()</label>
+			<label kind="synchronisation" x="-17969" y="-4148">LPQ_LP_[p_]!</label>
+			<label kind="assignment" x="-18232" y="-4105">Runway_busy_:=true, Lan_per_[p_]:= true,
+counter_:=0</label>
+			<nail x="-17833" y="-4156"/>
+			<nail x="-17875" y="-4190"/>
+		</transition>
+		<transition>
+			<source ref="id60"/>
+			<target ref="id61"/>
+			<label kind="guard" x="-17416" y="-4106">not Runway_busy_&amp;&amp;
+not Elan_per_[p_] 
+&amp;&amp; not Perm_Given_[p_] &amp;&amp; 
+not(bb_==Emergency_Prog_)</label>
+			<label kind="synchronisation" x="-17552" y="-4148">ELP_[p_]!</label>
+			<label kind="assignment" x="-17518" y="-4029">Elan_per_[p_]:= bb_, Perm_Given_[p_]:=true,
+Emergency_Prog_:= true, Runway_busy_:=true</label>
+			<nail x="-17518" y="-4114"/>
+			<nail x="-17467" y="-4131"/>
+		</transition>
+		<transition>
+			<source ref="id56"/>
+			<target ref="id57"/>
+			<label kind="guard" x="-18241" y="-4590">not Perm_Given_[p_] &amp;&amp; (Emergency_Prog_ imply bb_==false) &amp;&amp; (((lenH_ &gt;= Max_Queue_Size_ and High_Risk_[p_])
+or (lenL_ &gt;= Max_Queue_Size_ and not High_Risk_[p_])) imply bb_==false) &amp;&amp; 
+(bb_== false imply ((lenH_ &gt;= Max_Queue_Size_ and High_Risk_[p_])
+or (lenL_ &gt;= Max_Queue_Size_ and not High_Risk_[p_]))) &amp;&amp; (((lenH_ &gt;= Max_Queue_Size_ and fuel_[p_]!=high_) 
+or ( lenL_ &gt;= Max_Queue_Size_ and fuel_[p_]==high_)) imply 
+bb_==false) &amp;&amp;  (bb_==false imply ((lenH_ &gt;= Max_Queue_Size_ and fuel_[p_]!=high_) 
+or ( lenL_ &gt;= Max_Queue_Size_ and fuel_[p_]==high_)))</label>
+			<label kind="synchronisation" x="-17901" y="-4437">LQ_[p_]!</label>
+			<label kind="assignment" x="-18232" y="-4445">Perm_Given_[p_]:= true,
+LQ_per_[p_]:=bb_</label>
+			<nail x="-17918" y="-4445"/>
+			<nail x="-17867" y="-4445"/>
+		</transition>
+		<transition>
+			<source ref="id69"/>
+			<target ref="id68"/>
+			<label kind="synchronisation" x="-17442" y="-4479">ELR_HPQ_[p_]?</label>
+			<nail x="-17408" y="-4445"/>
+			<nail x="-17459" y="-4471"/>
+		</transition>
+		<transition>
+			<source ref="id71"/>
+			<target ref="id70"/>
+			<label kind="synchronisation" x="-17382" y="-4352">ELR_LPQ_[p_]?</label>
+			<nail x="-17314" y="-4309"/>
+			<nail x="-17340" y="-4369"/>
+		</transition>
+		<transition>
+			<source ref="id66"/>
+			<target ref="id67"/>
+			<label kind="guard" x="-17748" y="-4097">not Gate_asn_[p_] 
+&amp;&amp; Runway_busy_</label>
+			<label kind="synchronisation" x="-17714" y="-4122">GG_[p_]!</label>
+			<label kind="assignment" x="-17756" y="-4063">Gate_asn_[p_]:= true</label>
+			<nail x="-17765" y="-4097"/>
+			<nail x="-17705" y="-4097"/>
+			<nail x="-17654" y="-4097"/>
+		</transition>
+	</template>
+	<system>// Place template instantiations here.
+
+// List one or more processes to be composed into a system.
+
+ //Model2 properties 
+
+// Place template instantiations here.
+
+// List one or more processes to be composed into a system.
+
+system M3_Planes, M3_Controller ,M3_Planes_ ,M3_Controller_;</system>
+	<queries>
+		<query>
+			<formula>A&lt;&gt; forall (i : int [0,2])  (M3_Planes(i).At_Gate || M3_Planes(i).Leaving_Airport) &amp;&amp; Gclk &lt;= 120</formula>
+			<comment></comment>
+		</query>
+	</queries>
+</nta>

@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.1//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_2.dtd'>
+<nta>
+	<declaration>/* 
+    Bisimulation Verification of UPPAAL Models (2020)
+    Dept of Software Science
+    TALLINN UNIVERSITY OF TECHNOLOGY (TALTECH)
+    Author : Naveed Ahmed Alizai M.Sc
+    Supervisors :  Jüri Vain Ph.D. , Leonidas Tsiopoulos Ph.D.
+*/
+// Place global declarations here.
+
+int f1=0, f2=0, f3=0, g1=0, g2=0, g3=0;
+bool flag=false;
+chan io_ch, io_ch1, io_ch2, io_ch_, io_ch1_, io_ch2_; 
+chan c_sync1, c_sync2, c_sync3, e_sync1, e_sync2, e_sync3;
+
+const int C1=2;
+const int C2=3;</declaration>
+	<template>
+		<name x="5" y="5">M1P1</name>
+		<declaration>// Place local declarations here.
+clock cl;</declaration>
+		<location id="id0" x="-145" y="-230">
+			<urgent/>
+		</location>
+		<location id="id1" x="-238" y="-111">
+			<name x="-255" y="-145">li</name>
+			<urgent/>
+		</location>
+		<location id="id2" x="-145" y="-34">
+			<name x="-153" y="-17">li2</name>
+		</location>
+		<location id="id3" x="0" y="-102">
+			<name x="8" y="-136">li1</name>
+			<urgent/>
+		</location>
+		<location id="id4" x="-145" y="-170">
+			<name x="-128" y="-179">li3</name>
+			<urgent/>
+		</location>
+		<init ref="id0"/>
+		<transition color="#ff00ff">
+			<source ref="id4"/>
+			<target ref="id0"/>
+			<label kind="synchronisation" x="-144" y="-204">e_sync3!</label>
+		</transition>
+		<transition color="#ff00ff">
+			<source ref="id3"/>
+			<target ref="id2"/>
+			<label kind="synchronisation" x="-60" y="-60">e_sync2!</label>
+			<nail x="0" y="-34"/>
+		</transition>
+		<transition color="#ff00ff">
+			<source ref="id1"/>
+			<target ref="id2"/>
+			<label kind="synchronisation" x="-230" y="-60">e_sync1!</label>
+			<nail x="-238" y="-34"/>
+		</transition>
+		<transition>
+			<source ref="id0"/>
+			<target ref="id3"/>
+			<label kind="guard" x="-77" y="-221">flag==false</label>
+			<label kind="synchronisation" x="-77" y="-204">io_ch1!</label>
+			<label kind="assignment" x="-77" y="-187">flag=true,
+f2=1</label>
+			<nail x="0" y="-230"/>
+			<nail x="0" y="-170"/>
+		</transition>
+		<transition>
+			<source ref="id2"/>
+			<target ref="id4"/>
+			<label kind="guard" x="-136" y="-128">flag==false</label>
+			<label kind="synchronisation" x="-136" y="-111">io_ch2!</label>
+			<label kind="assignment" x="-136" y="-94">flag=true,
+f3=1</label>
+		</transition>
+		<transition>
+			<source ref="id0"/>
+			<target ref="id1"/>
+			<label kind="guard" x="-230" y="-221">flag==false</label>
+			<label kind="synchronisation" x="-230" y="-204">io_ch!</label>
+			<label kind="assignment" x="-230" y="-187">flag=true,
+f1=1</label>
+			<nail x="-238" y="-230"/>
+			<nail x="-238" y="-179"/>
+		</transition>
+	</template>
+	<template>
+		<name>M1P2</name>
+		<declaration>clock cl;</declaration>
+		<location id="id5" x="-85" y="-178">
+			<urgent/>
+		</location>
+		<location id="id6" x="-170" y="-8">
+			<name x="-178" y="8">lj</name>
+			<urgent/>
+		</location>
+		<location id="id7" x="-85" y="-8">
+			<name x="-93" y="8">lj2</name>
+		</location>
+		<location id="id8" x="42" y="-8">
+			<name x="34" y="8">lj1</name>
+			<urgent/>
+		</location>
+		<location id="id9" x="-85" y="-93">
+			<name x="-119" y="-102">lj3</name>
+			<urgent/>
+		</location>
+		<init ref="id5"/>
+		<transition color="#ff00ff">
+			<source ref="id9"/>
+			<target ref="id5"/>
+			<label kind="synchronisation" x="-85" y="-144">c_sync3!</label>
+		</transition>
+		<transition>
+			<source ref="id7"/>
+			<target ref="id9"/>
+			<label kind="synchronisation" x="-77" y="-68">io_ch2?</label>
+			<label kind="assignment" x="-77" y="-51">g3=1</label>
+		</transition>
+		<transition color="#ff00ff">
+			<source ref="id8"/>
+			<target ref="id7"/>
+			<label kind="synchronisation" x="-42" y="-34">c_sync2!</label>
+		</transition>
+		<transition>
+			<source ref="id5"/>
+			<target ref="id8"/>
+			<label kind="synchronisation" x="-17" y="-170">io_ch1?</label>
+			<label kind="assignment" x="-17" y="-153">g2=1</label>
+			<nail x="41" y="-178"/>
+			<nail x="42" y="-85"/>
+		</transition>
+		<transition color="#ff00ff">
+			<source ref="id6"/>
+			<target ref="id7"/>
+			<label kind="synchronisation" x="-153" y="-34">c_sync1!</label>
+		</transition>
+		<transition>
+			<source ref="id5"/>
+			<target ref="id6"/>
+			<label kind="synchronisation" x="-161" y="-170">io_ch?</label>
+			<label kind="assignment" x="-161" y="-153">g1=1</label>
+			<nail x="-170" y="-178"/>
+			<nail x="-170" y="-68"/>
+		</transition>
+	</template>
+	<template>
+		<name>M2P1</name>
+		<declaration>clock cl;</declaration>
+		<location id="id10" x="59" y="-93">
+			<urgent/>
+		</location>
+		<location id="id11" x="-34" y="-34">
+			<name x="-61" y="-43">li_</name>
+			<urgent/>
+		</location>
+		<location id="id12" x="-34" y="34">
+			<name x="-68" y="25">li1_</name>
+			<committed/>
+		</location>
+		<location id="id13" x="59" y="110">
+			<name x="51" y="119">li4_</name>
+		</location>
+		<location id="id14" x="187" y="-34">
+			<name x="204" y="-42">li2_</name>
+			<urgent/>
+		</location>
+		<location id="id15" x="187" y="34">
+			<name x="204" y="25">li3_</name>
+			<committed/>
+		</location>
+		<location id="id16" x="59" y="42">
+			<name x="25" y="34">li5_</name>
+			<urgent/>
+		</location>
+		<location id="id17" x="59" y="-17">
+			<name x="25" y="-25">li6_</name>
+			<committed/>
+		</location>
+		<init ref="id10"/>
+		<transition color="#ff00ff">
+			<source ref="id17"/>
+			<target ref="id10"/>
+			<label kind="synchronisation" x="68" y="-76">e_sync3?</label>
+			<label kind="assignment" x="68" y="-59">flag=false</label>
+		</transition>
+		<transition>
+			<source ref="id16"/>
+			<target ref="id17"/>
+			<label kind="synchronisation" x="68" y="8">io_ch2_!</label>
+		</transition>
+		<transition color="#ff00ff">
+			<source ref="id13"/>
+			<target ref="id16"/>
+			<label kind="guard" x="68" y="59">f3==1</label>
+			<label kind="assignment" x="68" y="76">f3=0</label>
+		</transition>
+		<transition>
+			<source ref="id11"/>
+			<target ref="id12"/>
+			<label kind="synchronisation" x="-25" y="-8">io_ch_!</label>
+		</transition>
+		<transition color="#ff00ff">
+			<source ref="id15"/>
+			<target ref="id13"/>
+			<label kind="synchronisation" x="127" y="68">e_sync2?</label>
+			<label kind="assignment" x="119" y="85">flag=false</label>
+			<nail x="187" y="110"/>
+		</transition>
+		<transition>
+			<source ref="id14"/>
+			<target ref="id15"/>
+			<label kind="synchronisation" x="127" y="-17">io_ch1_!</label>
+		</transition>
+		<transition color="#ff00ff">
+			<source ref="id10"/>
+			<target ref="id14"/>
+			<label kind="guard" x="136" y="-93">f2==1</label>
+			<label kind="assignment" x="136" y="-76">f2=0</label>
+			<nail x="187" y="-93"/>
+		</transition>
+		<transition color="#ff00ff">
+			<source ref="id12"/>
+			<target ref="id13"/>
+			<label kind="synchronisation" x="-25" y="68">e_sync1?</label>
+			<label kind="assignment" x="-25" y="85">flag=false</label>
+			<nail x="-34" y="110"/>
+		</transition>
+		<transition color="#ff00ff">
+			<source ref="id10"/>
+			<target ref="id11"/>
+			<label kind="guard" x="-25" y="-93">f1==1</label>
+			<label kind="assignment" x="-25" y="-76">f1=0</label>
+			<nail x="-34" y="-93"/>
+		</transition>
+	</template>
+	<template>
+		<name>M2P2</name>
+		<declaration>clock cl;</declaration>
+		<location id="id18" x="-119" y="-272">
+			<urgent/>
+		</location>
+		<location id="id19" x="-221" y="-272">
+			<name x="-231" y="-306">lj_</name>
+			<urgent/>
+		</location>
+		<location id="id20" x="-221" y="-42">
+			<name x="-229" y="-25">lj1_</name>
+			<committed/>
+		</location>
+		<location id="id21" x="-119" y="-42">
+			<name x="-127" y="-25">lj4_</name>
+		</location>
+		<location id="id22" x="0" y="-272">
+			<name x="17" y="-280">lj2_</name>
+			<urgent/>
+		</location>
+		<location id="id23" x="0" y="-42">
+			<name x="-8" y="-25">lj3_</name>
+			<committed/>
+		</location>
+		<location id="id24" x="-119" y="-187">
+			<name x="-102" y="-195">lj6_</name>
+			<committed/>
+		</location>
+		<location id="id25" x="-119" y="-127">
+			<name x="-102" y="-136">lj5_</name>
+			<urgent/>
+		</location>
+		<init ref="id18"/>
+		<transition>
+			<source ref="id25"/>
+			<target ref="id24"/>
+			<label kind="synchronisation" x="-187" y="-161">io_ch2_?</label>
+		</transition>
+		<transition color="#ff00ff">
+			<source ref="id21"/>
+			<target ref="id25"/>
+			<label kind="guard" x="-110" y="-102">g3==1</label>
+			<label kind="assignment" x="-110" y="-85">g3=0</label>
+		</transition>
+		<transition color="#ff00ff">
+			<source ref="id20"/>
+			<target ref="id21"/>
+			<label kind="synchronisation" x="-204" y="-68">c_sync1?</label>
+		</transition>
+		<transition color="#ff00ff">
+			<source ref="id23"/>
+			<target ref="id21"/>
+			<label kind="synchronisation" x="-76" y="-68">c_sync2?</label>
+		</transition>
+		<transition>
+			<source ref="id22"/>
+			<target ref="id23"/>
+			<label kind="synchronisation" x="-68" y="-161">io_ch1_?</label>
+		</transition>
+		<transition color="#ff00ff">
+			<source ref="id18"/>
+			<target ref="id22"/>
+			<label kind="guard" x="-76" y="-272">g2==1</label>
+			<label kind="assignment" x="-77" y="-255">g2=0</label>
+		</transition>
+		<transition color="#ff00ff">
+			<source ref="id24"/>
+			<target ref="id18"/>
+			<label kind="synchronisation" x="-110" y="-229">c_sync3?</label>
+		</transition>
+		<transition>
+			<source ref="id19"/>
+			<target ref="id20"/>
+			<label kind="synchronisation" x="-212" y="-221">io_ch_?</label>
+		</transition>
+		<transition color="#ff00ff">
+			<source ref="id18"/>
+			<target ref="id19"/>
+			<label kind="guard" x="-195" y="-272">g1==1</label>
+			<label kind="assignment" x="-195" y="-255">g1=0</label>
+			<nail x="-178" y="-272"/>
+		</transition>
+	</template>
+	<system>system M1P1, M2P1, M1P2, M2P2;</system>
+	<queries>
+		<query>
+			<formula>A[] not deadlock</formula>
+			<comment></comment>
+		</query>
+	</queries>
+</nta>

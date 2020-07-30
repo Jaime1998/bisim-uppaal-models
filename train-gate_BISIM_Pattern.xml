@@ -1,0 +1,596 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.1//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_2.dtd'>
+<nta>
+	<declaration>/*
+ * Original model reference : 
+ * For more details about this example, see 
+ * "Automatic Verification of Real-Time Communicating Systems by Constraint Solving", 
+ * by Wang Yi, Paul Pettersson and Mats Daniels. In Proceedings of the 7th International
+ * Conference on Formal Description Techniques, pages 223-238, North-Holland. 1994.
+ */
+
+/* 
+    Case study used for Bisimulation Verification of UPPAAL Models (2020)
+    Dept of Software Science
+    TALLINN UNIVERSITY OF TECHNOLOGY (TALTECH)
+    Modified by : Naveed Ahmed Alizai M.Sc
+    Supervisors :  Jüri Vain Ph.D. , Leonidas Tsiopoulos Ph.D.
+*/
+
+
+const int N = 2;         // # trains
+
+int f1[N], f2[N], f3[N], f4[N];
+int g1=0, g2=0, g3=0, g4=0;
+
+chan e_sync1[N], e_sync2[N], e_sync3[N], e_sync4[N], e_sync5[N], e_sync6[N];
+chan c_sync1, c_sync2, c_sync3, c_sync4, c_sync5; 
+typedef int[0,N-1] id_t;
+chan        appr[N], stop[N], leave[N];
+urgent chan go[N];
+bool flag = false;
+//Merged model declarations 
+
+const int N_ = 2;         // # trains_
+typedef int[0,N_-1] id_t_;
+chan        appr_[N_], stop_[N_], leave_[N_];
+urgent chan go_[N_];</declaration>
+	<template>
+		<name x="40" y="16">Train</name>
+		<parameter>const id_t id</parameter>
+		<declaration>clock x;</declaration>
+		<location id="id0" x="93" y="76">
+			<name x="45" y="60">Safe</name>
+		</location>
+		<location id="id1" x="195" y="331">
+			<name x="178" y="340">Stop</name>
+		</location>
+		<location id="id2" x="323" y="76">
+			<name x="339" y="60">Cross</name>
+			<label kind="invariant" x="339" y="76">x&lt;=5</label>
+		</location>
+		<location id="id3" x="93" y="229">
+			<name x="34" y="212">Appr</name>
+			<label kind="invariant" x="34" y="229">x&lt;=20</label>
+		</location>
+		<location id="id4" x="323" y="204">
+			<name x="339" y="188">Start</name>
+			<label kind="invariant" x="339" y="204">x&lt;= 15</label>
+		</location>
+		<location id="id5" x="93" y="161">
+			<urgent/>
+		</location>
+		<location id="id6" x="93" y="331">
+			<urgent/>
+		</location>
+		<location id="id7" x="323" y="331">
+			<urgent/>
+		</location>
+		<location id="id8" x="187" y="76">
+			<urgent/>
+		</location>
+		<init ref="id0"/>
+		<transition>
+			<source ref="id8"/>
+			<target ref="id0"/>
+			<label kind="synchronisation" x="102" y="51">e_sync4[id]!</label>
+		</transition>
+		<transition>
+			<source ref="id7"/>
+			<target ref="id4"/>
+			<label kind="synchronisation" x="297" y="255">e_sync3[id]!</label>
+			<label kind="assignment" x="323" y="271">x=0</label>
+		</transition>
+		<transition>
+			<source ref="id6"/>
+			<target ref="id1"/>
+			<label kind="synchronisation" x="102" y="306">e_sync2[id]!</label>
+		</transition>
+		<transition>
+			<source ref="id5"/>
+			<target ref="id3"/>
+			<label kind="synchronisation" x="34" y="178">e_sync1[id]!</label>
+			<label kind="assignment" x="34" y="195">x=0</label>
+		</transition>
+		<transition>
+			<source ref="id3"/>
+			<target ref="id2"/>
+			<label kind="guard" x="178" y="161">x&gt;=10</label>
+			<label kind="synchronisation" x="161" y="144">e_sync5[id]!</label>
+			<label kind="assignment" x="178" y="178">x=0</label>
+		</transition>
+		<transition>
+			<source ref="id3"/>
+			<target ref="id6"/>
+			<label kind="guard" x="34" y="255">x&lt;=10 &amp;&amp; flag==false</label>
+			<label kind="synchronisation" x="34" y="272">stop[id]?</label>
+			<label kind="assignment" x="34" y="289">f2[id]=1, 
+flag=true</label>
+		</transition>
+		<transition>
+			<source ref="id2"/>
+			<target ref="id8"/>
+			<label kind="guard" x="195" y="51">x&gt;=3 &amp;&amp; flag==false</label>
+			<label kind="synchronisation" x="212" y="76">leave[id]!</label>
+			<label kind="assignment" x="212" y="93">f3[id]=1,
+flag=true</label>
+		</transition>
+		<transition>
+			<source ref="id0"/>
+			<target ref="id5"/>
+			<label kind="guard" x="34" y="85">flag==false</label>
+			<label kind="synchronisation" x="34" y="102">appr[id]!</label>
+			<label kind="assignment" x="34" y="119">f1[id]=1,
+flag=true</label>
+		</transition>
+		<transition>
+			<source ref="id4"/>
+			<target ref="id2"/>
+			<label kind="guard" x="331" y="161">x&gt;=7</label>
+			<label kind="synchronisation" x="297" y="127">e_sync6[id]!</label>
+			<label kind="assignment" x="331" y="144">x=0</label>
+		</transition>
+		<transition>
+			<source ref="id1"/>
+			<target ref="id7"/>
+			<label kind="guard" x="229" y="306">flag==false</label>
+			<label kind="synchronisation" x="238" y="331">go[id]?</label>
+			<label kind="assignment" x="229" y="272">f4[id]=1,
+flag=true</label>
+		</transition>
+	</template>
+	<template>
+		<name x="40" y="16">Gate</name>
+		<declaration>id_t list[N+1];
+int[0,N] len;
+
+// Put an element at the end of the queue
+void enqueue(id_t element)
+{
+        list[len++] = element;
+}
+
+// Remove the front element of the queue
+void dequeue()
+{
+        int i = 0;
+        len -= 1;
+        while (i &lt; len)
+        {
+                list[i] = list[i + 1];
+                i++;
+        }
+        list[i] = 0;
+}
+
+// Returns the front element of the queue
+id_t front()
+{
+   return list[0];
+}
+
+// Returns the last element of the queue
+id_t tail()
+{
+   return list[len - 1];
+}</declaration>
+		<location id="id9" x="187" y="365">
+			<committed/>
+		</location>
+		<location id="id10" x="187" y="263">
+			<name x="170" y="272">Occ</name>
+		</location>
+		<location id="id11" x="187" y="59">
+			<name x="178" y="25">Free</name>
+		</location>
+		<location id="id12" x="187" y="195">
+			<urgent/>
+		</location>
+		<location id="id13" x="85" y="365">
+			<urgent/>
+		</location>
+		<location id="id14" x="289" y="263">
+			<urgent/>
+		</location>
+		<location id="id15" x="289" y="59">
+			<urgent/>
+		</location>
+		<location id="id16" x="85" y="59">
+			<urgent/>
+		</location>
+		<init ref="id11"/>
+		<transition>
+			<source ref="id11"/>
+			<target ref="id16"/>
+			<label kind="guard" x="110" y="59">len &gt; 0</label>
+			<label kind="synchronisation" x="110" y="76">go[front()]!</label>
+			<label kind="assignment" x="110" y="93">g4=1</label>
+		</transition>
+		<transition>
+			<source ref="id15"/>
+			<target ref="id11"/>
+			<label kind="synchronisation" x="212" y="59">c_sync4!</label>
+		</transition>
+		<transition>
+			<source ref="id14"/>
+			<target ref="id10"/>
+			<label kind="synchronisation" x="212" y="263">c_sync3!</label>
+		</transition>
+		<transition>
+			<source ref="id13"/>
+			<target ref="id9"/>
+			<label kind="synchronisation" x="103" y="348">c_sync2!</label>
+		</transition>
+		<transition>
+			<source ref="id12"/>
+			<target ref="id10"/>
+			<label kind="synchronisation" x="170" y="212">c_sync1!</label>
+		</transition>
+		<transition>
+			<source ref="id10"/>
+			<target ref="id13"/>
+			<label kind="select" x="93" y="272">e : id_t</label>
+			<label kind="synchronisation" x="93" y="288">appr[e]?</label>
+			<label kind="assignment" x="93" y="304">enqueue(e),
+g1=1</label>
+			<nail x="83" y="265"/>
+		</transition>
+		<transition>
+			<source ref="id10"/>
+			<target ref="id15"/>
+			<label kind="select" x="297" y="86">e : id_t</label>
+			<label kind="guard" x="297" y="102">e == front()</label>
+			<label kind="synchronisation" x="297" y="118">leave[e]?</label>
+			<label kind="assignment" x="297" y="134">dequeue(),
+g3=1</label>
+			<nail x="213" y="241"/>
+			<nail x="290" y="232"/>
+			<nail x="290" y="113"/>
+		</transition>
+		<transition>
+			<source ref="id9"/>
+			<target ref="id14"/>
+			<label kind="synchronisation" x="221" y="306">stop[tail()]!</label>
+			<label kind="assignment" x="221" y="323">g2=1</label>
+			<nail x="289" y="365"/>
+		</transition>
+		<transition>
+			<source ref="id16"/>
+			<target ref="id10"/>
+			<label kind="synchronisation" x="93" y="204">c_sync5!</label>
+			<nail x="85" y="93"/>
+			<nail x="85" y="229"/>
+			<nail x="161" y="238"/>
+		</transition>
+		<transition>
+			<source ref="id11"/>
+			<target ref="id12"/>
+			<label kind="select" x="195" y="87">e : id_t</label>
+			<label kind="guard" x="195" y="103">len == 0</label>
+			<label kind="synchronisation" x="195" y="119">appr[e]?</label>
+			<label kind="assignment" x="195" y="135">enqueue(e),
+g1=1</label>
+		</transition>
+	</template>
+	<template>
+		<name x="40" y="16">Train_</name>
+		<parameter>const id_t_ id</parameter>
+		<declaration>
+clock x_;</declaration>
+		<location id="id17" x="85" y="51">
+			<name x="37" y="35">Safe</name>
+		</location>
+		<location id="id18" x="272" y="323">
+			<name x="255" y="332">Stop</name>
+		</location>
+		<location id="id19" x="348" y="51">
+			<name x="364" y="35">Cross</name>
+			<label kind="invariant" x="364" y="51">x_&lt;=5</label>
+		</location>
+		<location id="id20" x="85" y="246">
+			<name x="25" y="230">Appr</name>
+			<label kind="invariant" x="25" y="246">x_&lt;=20</label>
+		</location>
+		<location id="id21" x="348" y="153">
+			<name x="364" y="137">Start</name>
+			<label kind="invariant" x="364" y="153">x_&lt;= 15</label>
+		</location>
+		<location id="id22" x="85" y="110">
+			<urgent/>
+		</location>
+		<location id="id23" x="85" y="170">
+			<committed/>
+		</location>
+		<location id="id24" x="85" y="323">
+			<urgent/>
+		</location>
+		<location id="id25" x="178" y="323">
+			<committed/>
+		</location>
+		<location id="id26" x="348" y="323">
+			<urgent/>
+		</location>
+		<location id="id27" x="348" y="229">
+			<committed/>
+		</location>
+		<location id="id28" x="178" y="51">
+			<committed/>
+		</location>
+		<location id="id29" x="263" y="51">
+			<urgent/>
+		</location>
+		<init ref="id17"/>
+		<transition>
+			<source ref="id19"/>
+			<target ref="id29"/>
+			<label kind="guard" x="280" y="8">x_&gt;=3 &amp;&amp; 
+f3[id]==1</label>
+			<label kind="assignment" x="280" y="51">f3[id]=0</label>
+		</transition>
+		<transition>
+			<source ref="id28"/>
+			<target ref="id17"/>
+			<label kind="synchronisation" x="93" y="25">e_sync4[id]?</label>
+			<label kind="assignment" x="103" y="51">flag=false</label>
+		</transition>
+		<transition>
+			<source ref="id27"/>
+			<target ref="id21"/>
+			<label kind="synchronisation" x="340" y="170">e_sync3[id]?</label>
+			<label kind="assignment" x="357" y="187">x_=0,
+flag=false</label>
+		</transition>
+		<transition>
+			<source ref="id18"/>
+			<target ref="id26"/>
+			<label kind="guard" x="280" y="297">f4[id]==1</label>
+			<label kind="assignment" x="289" y="323">f4[id]=0</label>
+		</transition>
+		<transition>
+			<source ref="id25"/>
+			<target ref="id18"/>
+			<label kind="synchronisation" x="187" y="297">e_sync2[id]?</label>
+			<label kind="assignment" x="196" y="323">flag=false</label>
+		</transition>
+		<transition>
+			<source ref="id20"/>
+			<target ref="id24"/>
+			<label kind="guard" x="25" y="272">x_&lt;=10 &amp;&amp; f2[id]==1</label>
+			<label kind="assignment" x="25" y="289">f2[id]=0</label>
+		</transition>
+		<transition>
+			<source ref="id23"/>
+			<target ref="id20"/>
+			<label kind="synchronisation" x="25" y="178">e_sync1[id]?</label>
+			<label kind="assignment" x="25" y="195">x_=0,
+flag=false</label>
+		</transition>
+		<transition>
+			<source ref="id17"/>
+			<target ref="id22"/>
+			<label kind="guard" x="25" y="59">f1[id]==1</label>
+			<label kind="assignment" x="25" y="76">f1[id]=0</label>
+		</transition>
+		<transition>
+			<source ref="id20"/>
+			<target ref="id19"/>
+			<label kind="guard" x="187" y="153">x_&gt;=10</label>
+			<label kind="synchronisation" x="170" y="136">e_sync5[id]?</label>
+			<label kind="assignment" x="195" y="187">x_=0</label>
+			<nail x="289" y="144"/>
+		</transition>
+		<transition>
+			<source ref="id24"/>
+			<target ref="id25"/>
+			<label kind="synchronisation" x="102" y="298">stop_[id]?</label>
+		</transition>
+		<transition>
+			<source ref="id29"/>
+			<target ref="id28"/>
+			<label kind="synchronisation" x="187" y="25">leave_[id]!</label>
+		</transition>
+		<transition>
+			<source ref="id22"/>
+			<target ref="id23"/>
+			<label kind="synchronisation" x="25" y="127">appr_[id]!</label>
+		</transition>
+		<transition>
+			<source ref="id21"/>
+			<target ref="id19"/>
+			<label kind="guard" x="357" y="93">x_&gt;=7</label>
+			<label kind="synchronisation" x="340" y="76">e_sync6[id]?</label>
+			<label kind="assignment" x="357" y="110">x_=0</label>
+		</transition>
+		<transition>
+			<source ref="id26"/>
+			<target ref="id27"/>
+			<label kind="synchronisation" x="356" y="255">go_[id]?</label>
+		</transition>
+	</template>
+	<template>
+		<name x="40" y="16">Gate_</name>
+		<declaration>
+// Put an element at the end of the queue
+// Remove the front element of the queue
+// Returns the front element of the queue
+// Returns the last element of the queue
+id_t_ list_[N_+1];
+int[0,N_] len_;
+void enqueue_(id_t_ element_)
+{
+        list_[len_++] = element_;
+}
+void dequeue_()
+{
+        int i_ = 0;
+        len_ -= 1;
+        while (i_ &lt; len_)
+        {
+                list_[i_] = list_[i_ + 1];
+                i_++;
+        }
+        list_[i_] = 0;
+}
+id_t_ front_()
+{
+   return list_[0];
+}
+id_t_ tail_()
+{
+   return list_[len_ - 1];
+}</declaration>
+		<location id="id30" x="195" y="399">
+			<committed/>
+		</location>
+		<location id="id31" x="195" y="306">
+			<name x="178" y="314">Occ</name>
+		</location>
+		<location id="id32" x="195" y="85">
+			<name x="178" y="51">Free</name>
+		</location>
+		<location id="id33" x="195" y="229">
+			<committed/>
+		</location>
+		<location id="id34" x="195" y="144">
+			<urgent/>
+		</location>
+		<location id="id35" x="85" y="306">
+			<urgent/>
+		</location>
+		<location id="id36" x="85" y="399">
+			<committed/>
+		</location>
+		<location id="id37" x="297" y="399">
+			<urgent/>
+		</location>
+		<location id="id38" x="297" y="306">
+			<committed/>
+		</location>
+		<location id="id39" x="297" y="272">
+			<urgent/>
+		</location>
+		<location id="id40" x="297" y="85">
+			<committed/>
+		</location>
+		<location id="id41" x="76" y="85">
+			<urgent/>
+		</location>
+		<location id="id42" x="76" y="204">
+			<committed/>
+		</location>
+		<init ref="id32"/>
+		<transition>
+			<source ref="id41"/>
+			<target ref="id42"/>
+			<label kind="guard" x="85" y="127">len_ &gt; 0</label>
+			<label kind="synchronisation" x="85" y="144">go_[front_()]!</label>
+		</transition>
+		<transition>
+			<source ref="id32"/>
+			<target ref="id41"/>
+			<label kind="guard" x="110" y="59">g4==1</label>
+			<label kind="assignment" x="110" y="85">g4=0</label>
+		</transition>
+		<transition>
+			<source ref="id31"/>
+			<target ref="id39"/>
+			<label kind="guard" x="238" y="246">g3==1</label>
+			<label kind="assignment" x="238" y="272">g3=0</label>
+			<nail x="212" y="272"/>
+		</transition>
+		<transition>
+			<source ref="id40"/>
+			<target ref="id32"/>
+			<label kind="synchronisation" x="221" y="59">c_sync4?</label>
+		</transition>
+		<transition>
+			<source ref="id30"/>
+			<target ref="id37"/>
+			<label kind="guard" x="221" y="374">g2==1</label>
+			<label kind="assignment" x="221" y="399">g2=0</label>
+		</transition>
+		<transition>
+			<source ref="id38"/>
+			<target ref="id31"/>
+			<label kind="synchronisation" x="221" y="306">c_sync3?</label>
+		</transition>
+		<transition>
+			<source ref="id36"/>
+			<target ref="id30"/>
+			<label kind="synchronisation" x="103" y="382">c_sync2?</label>
+		</transition>
+		<transition>
+			<source ref="id31"/>
+			<target ref="id35"/>
+			<label kind="guard" x="110" y="280">g1==1</label>
+			<label kind="assignment" x="110" y="306">g1=0</label>
+		</transition>
+		<transition>
+			<source ref="id32"/>
+			<target ref="id34"/>
+			<label kind="guard" x="204" y="93">g1==1</label>
+			<label kind="assignment" x="204" y="110">g1=0</label>
+			<nail x="195" y="102"/>
+		</transition>
+		<transition>
+			<source ref="id33"/>
+			<target ref="id31"/>
+			<label kind="synchronisation" x="170" y="246">c_sync1?</label>
+			<nail x="195" y="272"/>
+		</transition>
+		<transition>
+			<source ref="id35"/>
+			<target ref="id36"/>
+			<label kind="select" x="93" y="332">e : id_t_</label>
+			<label kind="synchronisation" x="93" y="348">appr_[e]?</label>
+			<label kind="assignment" x="93" y="364">enqueue_(e)</label>
+		</transition>
+		<transition>
+			<source ref="id39"/>
+			<target ref="id40"/>
+			<label kind="select" x="306" y="153">e : id_t_</label>
+			<label kind="guard" x="306" y="170">e == front_()</label>
+			<label kind="synchronisation" x="306" y="187">leave_[e]?</label>
+			<label kind="assignment" x="306" y="204">dequeue_()</label>
+			<nail x="297" y="229"/>
+			<nail x="297" y="212"/>
+			<nail x="297" y="153"/>
+		</transition>
+		<transition>
+			<source ref="id37"/>
+			<target ref="id38"/>
+			<label kind="synchronisation" x="212" y="348">stop_[tail_()]!</label>
+			<nail x="297" y="365"/>
+		</transition>
+		<transition>
+			<source ref="id42"/>
+			<target ref="id31"/>
+			<label kind="synchronisation" x="85" y="246">c_sync5?</label>
+			<nail x="76" y="246"/>
+			<nail x="76" y="272"/>
+			<nail x="161" y="272"/>
+		</transition>
+		<transition>
+			<source ref="id34"/>
+			<target ref="id33"/>
+			<label kind="select" x="204" y="154">e : id_t_</label>
+			<label kind="guard" x="204" y="171">len_ == 0</label>
+			<label kind="synchronisation" x="204" y="187">appr_[e]?</label>
+			<label kind="assignment" x="204" y="203">enqueue_(e)</label>
+		</transition>
+	</template>
+	<system>
+
+
+ //Model2 properties 
+
+
+
+system Train, Gate ,Train_ ,Gate_;</system>
+	<queries>
+		<query>
+			<formula>A[] not deadlock</formula>
+			<comment></comment>
+		</query>
+	</queries>
+</nta>

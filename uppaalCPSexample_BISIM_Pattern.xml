@@ -1,0 +1,786 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.1//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_2.dtd'>
+<nta>
+	<declaration>/* Original model reference : 
+Cyber Physical Systems 
+Workshop at the 4th Heidelberg Lauereate Forum 2016
+The workshop features the ACM Turing Award winners Joseph Sifakis (2007) and Vinton Cerf (2004). 
+It was organized by Marc-Oliver Pahl (TUM), Amel Bennaceur (Open University), and Sai Manoj (TU Wien).
+
+The workshop took place at the occasion of the 4th Heidelberg Laureate Forum (http://www.heidelberg-laureate-forum.org/). 
+The Heidelberg Laureate forum is an annual forum organized by the Klaus Tschira Stiftung. 200 selected students assemble in 
+Heidelberg to meet and discuss with winners of the ACM Turing Award, the Abel Prize, and the Fields Medal.
+
+On Monday, Sep 19 2016, 30 students participated in the workshop on Cyber Physical Systems. 
+The participants learned about methodologies of Cyber Physical Systems (CPS) research, and its relation to the Internet of Things (IoT). 
+The workshop ended with a discussion on challenges and opportunities of CPS. According to the received feedback, the workshop was a full success.
+
+Modelling a Cyber Physical System with Uppaal
+https://s2o.net.in.tum.de/?site=2016-09_HLF-CPS
+*/
+
+/* 
+    Case study used for Bisimulation Verification of UPPAAL Models (2020)
+    Dept of Software Science
+    TALLINN UNIVERSITY OF TECHNOLOGY (TALTECH)
+    Modified by : Naveed Ahmed Alizai M.Sc
+    Supervisors :  Jüri Vain Ph.D. , Leonidas Tsiopoulos Ph.D.
+*/
+
+// Place global declarations here.
+
+bool flag=false;
+int f1=0,f2=0,f3=0,f4=0,f5=0;
+chan e_sync1, e_sync2, e_sync3, e_sync4, e_sync5;
+int g1=0,g2=0,g3=0,g4=0,g5=0,g6=0,g7=0,g8=0,g9=0,g10=0;
+chan c_sync1, c_sync2, c_sync3, c_sync4, c_sync5, c_sync6, c_sync7, c_sync8, c_sync9, c_sync10;
+
+int r; // resistance
+int[-20,0] t; //temperature
+chan i_resistance;
+
+//Merged model declarations 
+
+// Place global declarations here.
+int r_; // resistance_
+int[-20,0] t_; //temperature_
+chan i_resistance_;</declaration>
+	<template>
+		<name>ResistanceChangeEmulator</name>
+		<location id="id0" x="-229" y="-25">
+			<name x="-255" y="-68">increase</name>
+		</location>
+		<location id="id1" x="25" y="-25">
+			<name x="-8" y="-68">decrease</name>
+		</location>
+		<location id="id2" x="-51" y="-110">
+		</location>
+		<location id="id3" x="-229" y="-110">
+			<urgent/>
+		</location>
+		<location id="id4" x="-365" y="59">
+			<urgent/>
+		</location>
+		<location id="id5" x="-119" y="59">
+			<urgent/>
+		</location>
+		<location id="id6" x="-102" y="-59">
+			<urgent/>
+		</location>
+		<location id="id7" x="170" y="-76">
+			<urgent/>
+		</location>
+		<init ref="id2"/>
+		<transition>
+			<source ref="id7"/>
+			<target ref="id1"/>
+			<label kind="synchronisation" x="85" y="-102">e_sync4!</label>
+			<nail x="76" y="-76"/>
+		</transition>
+		<transition>
+			<source ref="id3"/>
+			<target ref="id0"/>
+			<label kind="synchronisation" x="-221" y="-93">e_sync1!</label>
+		</transition>
+		<transition>
+			<source ref="id4"/>
+			<target ref="id0"/>
+			<label kind="synchronisation" x="-340" y="34">e_sync2!</label>
+			<nail x="-255" y="59"/>
+		</transition>
+		<transition>
+			<source ref="id5"/>
+			<target ref="id0"/>
+			<label kind="synchronisation" x="-195" y="34">e_sync5!</label>
+			<nail x="-204" y="59"/>
+		</transition>
+		<transition>
+			<source ref="id6"/>
+			<target ref="id1"/>
+			<label kind="synchronisation" x="-85" y="-59">e_sync3!</label>
+			<nail x="-25" y="-59"/>
+		</transition>
+		<transition>
+			<source ref="id1"/>
+			<target ref="id7"/>
+			<label kind="guard" x="85" y="-51">r&gt;600 &amp;&amp; 
+flag==false</label>
+			<label kind="synchronisation" x="77" y="33">i_resistance!</label>
+			<label kind="assignment" x="85" y="-8">r=r-10, f4=1, 
+flag=true</label>
+			<nail x="42" y="59"/>
+			<nail x="170" y="59"/>
+			<nail x="170" y="0"/>
+			<nail x="170" y="-8"/>
+		</transition>
+		<transition>
+			<source ref="id1"/>
+			<target ref="id5"/>
+			<label kind="guard" x="-51" y="0">r&lt;=600</label>
+			<label kind="synchronisation" x="-85" y="34">i_resistance!</label>
+			<label kind="assignment" x="-34" y="17">f5=1</label>
+			<nail x="0" y="59"/>
+			<nail x="-93" y="59"/>
+		</transition>
+		<transition>
+			<source ref="id0"/>
+			<target ref="id6"/>
+			<label kind="guard" x="-187" y="-59">r&gt;=900 &amp;&amp; 
+flag==false</label>
+			<label kind="synchronisation" x="-195" y="-25">i_resistance!</label>
+			<label kind="assignment" x="-204" y="-8">f3=1, flag=true</label>
+			<nail x="-187" y="-59"/>
+			<nail x="-153" y="-59"/>
+		</transition>
+		<transition>
+			<source ref="id0"/>
+			<target ref="id4"/>
+			<label kind="guard" x="-357" y="-85">r&lt;900 &amp;&amp; 
+flag==false</label>
+			<label kind="synchronisation" x="-357" y="-17">i_resistance!</label>
+			<label kind="assignment" x="-357" y="-51">r=r+10, f2=1,
+flag=true</label>
+			<nail x="-289" y="-85"/>
+			<nail x="-365" y="-85"/>
+			<nail x="-365" y="-42"/>
+			<nail x="-365" y="-25"/>
+		</transition>
+		<transition>
+			<source ref="id2"/>
+			<target ref="id3"/>
+			<label kind="guard" x="-204" y="-153">flag==false</label>
+			<label kind="synchronisation" x="-204" y="-136">i_resistance!</label>
+			<label kind="assignment" x="-204" y="-110">r=800, f1=1, flag=true</label>
+		</transition>
+	</template>
+	<template>
+		<name x="5" y="5">CPS</name>
+		<declaration>// Place local declarations here.</declaration>
+		<location id="id8" x="333" y="93">
+			<name x="306" y="127">minus_0</name>
+		</location>
+		<location id="id9" x="144" y="110">
+			<name x="102" y="68">minus_10</name>
+		</location>
+		<location id="id10" x="-51" y="93">
+			<name x="-34" y="85">minus_20</name>
+		</location>
+		<location id="id11" x="144" y="-93">
+			<name x="127" y="-127">Start</name>
+		</location>
+		<location id="id12" x="-51" y="0">
+			<urgent/>
+		</location>
+		<location id="id13" x="144" y="17">
+			<urgent/>
+		</location>
+		<location id="id14" x="331" y="25">
+			<urgent/>
+		</location>
+		<location id="id15" x="-187" y="93">
+			<urgent/>
+		</location>
+		<location id="id16" x="-51" y="221">
+			<urgent/>
+		</location>
+		<location id="id17" x="144" y="221">
+			<urgent/>
+		</location>
+		<location id="id18" x="331" y="221">
+			<urgent/>
+		</location>
+		<location id="id19" x="501" y="93">
+			<urgent/>
+		</location>
+		<location id="id20" x="34" y="17">
+		</location>
+		<location id="id21" x="238" y="8">
+		</location>
+		<init ref="id11"/>
+		<transition>
+			<source ref="id21"/>
+			<target ref="id8"/>
+			<label kind="synchronisation" x="263" y="42">c_sync6!</label>
+			<nail x="280" y="93"/>
+		</transition>
+		<transition>
+			<source ref="id20"/>
+			<target ref="id9"/>
+			<label kind="synchronisation" x="59" y="59">c_sync5!</label>
+			<nail x="76" y="110"/>
+		</transition>
+		<transition>
+			<source ref="id19"/>
+			<target ref="id8"/>
+			<label kind="synchronisation" x="408" y="119">c_sync7!</label>
+			<nail x="501" y="144"/>
+			<nail x="399" y="144"/>
+		</transition>
+		<transition>
+			<source ref="id18"/>
+			<target ref="id9"/>
+			<label kind="synchronisation" x="187" y="85">c_sync8!</label>
+			<nail x="263" y="221"/>
+			<nail x="263" y="110"/>
+		</transition>
+		<transition>
+			<source ref="id17"/>
+			<target ref="id9"/>
+			<label kind="synchronisation" x="85" y="178">c_sync9!</label>
+			<nail x="76" y="221"/>
+			<nail x="76" y="144"/>
+		</transition>
+		<transition>
+			<source ref="id16"/>
+			<target ref="id10"/>
+			<label kind="synchronisation" x="-119" y="153">c_sync10!</label>
+		</transition>
+		<transition>
+			<source ref="id15"/>
+			<target ref="id10"/>
+			<label kind="synchronisation" x="-170" y="119">c_sync4!</label>
+			<nail x="-187" y="144"/>
+			<nail x="-102" y="144"/>
+		</transition>
+		<transition>
+			<source ref="id8"/>
+			<target ref="id19"/>
+			<label kind="guard" x="382" y="68">r&gt;761</label>
+			<label kind="synchronisation" x="382" y="93">i_resistance?</label>
+			<label kind="assignment" x="425" y="68">g7=1</label>
+		</transition>
+		<transition>
+			<source ref="id8"/>
+			<target ref="id18"/>
+			<label kind="guard" x="349" y="152">r&lt;761</label>
+			<label kind="synchronisation" x="349" y="169">i_resistance?</label>
+			<label kind="assignment" x="349" y="186">t=-10, g8=1</label>
+		</transition>
+		<transition>
+			<source ref="id9"/>
+			<target ref="id17"/>
+			<label kind="guard" x="153" y="127">r&gt;=698 &amp;&amp; 
+r&lt;802</label>
+			<label kind="synchronisation" x="153" y="178">i_resistance?</label>
+			<label kind="assignment" x="153" y="161">g9=1</label>
+		</transition>
+		<transition>
+			<source ref="id9"/>
+			<target ref="id16"/>
+			<label kind="guard" x="-17" y="153">r&lt;698</label>
+			<label kind="synchronisation" x="-17" y="136">i_resistance?</label>
+			<label kind="assignment" x="-17" y="170">t=-20, 
+g10=1</label>
+			<nail x="42" y="127"/>
+			<nail x="42" y="221"/>
+		</transition>
+		<transition>
+			<source ref="id10"/>
+			<target ref="id15"/>
+			<label kind="guard" x="-161" y="68">r&lt;=733</label>
+			<label kind="synchronisation" x="-161" y="93">i_resistance?</label>
+			<label kind="assignment" x="-110" y="68">g4=1</label>
+		</transition>
+		<transition>
+			<source ref="id14"/>
+			<target ref="id8"/>
+			<label kind="synchronisation" x="340" y="42">c_sync3!</label>
+		</transition>
+		<transition>
+			<source ref="id13"/>
+			<target ref="id9"/>
+			<label kind="synchronisation" x="85" y="34">c_sync2!</label>
+		</transition>
+		<transition>
+			<source ref="id12"/>
+			<target ref="id10"/>
+			<label kind="synchronisation" x="-110" y="17">c_sync1!</label>
+		</transition>
+		<transition>
+			<source ref="id11"/>
+			<target ref="id14"/>
+			<label kind="guard" x="340" y="-68">r&gt;=802</label>
+			<label kind="synchronisation" x="340" y="-34">i_resistance?</label>
+			<label kind="assignment" x="340" y="-51">t=0, g3=1</label>
+			<nail x="331" y="-93"/>
+		</transition>
+		<transition>
+			<source ref="id11"/>
+			<target ref="id13"/>
+			<label kind="guard" x="76" y="-85">r&gt;733 &amp;&amp; 
+r&lt;802</label>
+			<label kind="synchronisation" x="51" y="-34">i_resistance?</label>
+			<label kind="assignment" x="59" y="-51">t=-10, g2=1</label>
+		</transition>
+		<transition>
+			<source ref="id9"/>
+			<target ref="id21"/>
+			<label kind="guard" x="187" y="0">r&gt;802</label>
+			<label kind="synchronisation" x="178" y="59">i_resistance?</label>
+			<label kind="assignment" x="187" y="17">t=0,
+g6=1</label>
+			<nail x="178" y="59"/>
+			<nail x="238" y="59"/>
+		</transition>
+		<transition>
+			<source ref="id10"/>
+			<target ref="id20"/>
+			<label kind="guard" x="-25" y="8">r&gt;733</label>
+			<label kind="synchronisation" x="-25" y="68">i_resistance?</label>
+			<label kind="assignment" x="-25" y="25">t=-10, 
+g5=1</label>
+			<nail x="-25" y="68"/>
+			<nail x="34" y="68"/>
+		</transition>
+		<transition>
+			<source ref="id11"/>
+			<target ref="id12"/>
+			<label kind="guard" x="-102" y="-85">r&lt;=733</label>
+			<label kind="synchronisation" x="-144" y="-34">i_resistance?</label>
+			<label kind="assignment" x="-93" y="-68">t=-20, 
+g1=1</label>
+			<nail x="-51" y="-93"/>
+		</transition>
+	</template>
+	<template>
+		<name>ResistanceChangeEmulator_</name>
+		<location id="id22" x="-229" y="-25">
+			<name x="-255" y="-59">increase</name>
+		</location>
+		<location id="id23" x="17" y="-25">
+			<name x="-8" y="-68">decrease</name>
+		</location>
+		<location id="id24" x="-374" y="-178">
+		</location>
+		<location id="id25" x="-374" y="42">
+			<committed/>
+		</location>
+		<location id="id26" x="-229" y="-102">
+			<committed/>
+		</location>
+		<location id="id27" x="-51" y="42">
+			<urgent/>
+		</location>
+		<location id="id28" x="-136" y="-59">
+			<urgent/>
+		</location>
+		<location id="id29" x="153" y="-59">
+			<committed/>
+		</location>
+		<location id="id30" x="-374" y="-51">
+			<urgent/>
+		</location>
+		<location id="id31" x="153" y="42">
+			<urgent/>
+		</location>
+		<location id="id32" x="-51" y="-25">
+			<committed/>
+		</location>
+		<location id="id33" x="-136" y="-153">
+			<committed/>
+		</location>
+		<location id="id34" x="-229" y="-178">
+			<urgent/>
+		</location>
+		<init ref="id24"/>
+		<transition>
+			<source ref="id24"/>
+			<target ref="id34"/>
+			<label kind="guard" x="-348" y="-204">f1==1</label>
+			<label kind="assignment" x="-348" y="-178">f1=0</label>
+		</transition>
+		<transition>
+			<source ref="id23"/>
+			<target ref="id27"/>
+			<label kind="guard" x="-34" y="-8">f5==1</label>
+			<label kind="assignment" x="-34" y="8">f5=0</label>
+			<nail x="-8" y="42"/>
+		</transition>
+		<transition>
+			<source ref="id32"/>
+			<target ref="id22"/>
+			<label kind="synchronisation" x="-212" y="17">e_sync5?</label>
+			<label kind="assignment" x="-212" y="42">flag=false</label>
+			<nail x="-144" y="-25"/>
+			<nail x="-153" y="42"/>
+			<nail x="-212" y="42"/>
+		</transition>
+		<transition>
+			<source ref="id27"/>
+			<target ref="id32"/>
+			<label kind="guard" x="-110" y="-8">r_&lt;=600</label>
+			<label kind="synchronisation" x="-144" y="8">i_resistance_!</label>
+		</transition>
+		<transition>
+			<source ref="id33"/>
+			<target ref="id23"/>
+			<label kind="synchronisation" x="-93" y="-178">e_sync3?</label>
+			<label kind="assignment" x="-93" y="-153">flag=false</label>
+			<nail x="17" y="-153"/>
+		</transition>
+		<transition>
+			<source ref="id28"/>
+			<target ref="id33"/>
+			<label kind="guard" x="-127" y="-110">r_&gt;=900</label>
+			<label kind="synchronisation" x="-127" y="-93">i_resistance_!</label>
+		</transition>
+		<transition>
+			<source ref="id23"/>
+			<target ref="id31"/>
+			<label kind="guard" x="59" y="25">f4==1</label>
+			<label kind="assignment" x="59" y="42">f4=0</label>
+			<nail x="51" y="42"/>
+		</transition>
+		<transition>
+			<source ref="id31"/>
+			<target ref="id29"/>
+			<label kind="guard" x="59" y="-34">r_&gt;600</label>
+			<label kind="synchronisation" x="59" y="-17">i_resistance_!</label>
+			<label kind="assignment" x="59" y="0">r_=r_-10</label>
+		</transition>
+		<transition>
+			<source ref="id22"/>
+			<target ref="id30"/>
+			<label kind="guard" x="-357" y="-93">f2==1</label>
+			<label kind="assignment" x="-357" y="-76">f2=0</label>
+			<nail x="-272" y="-51"/>
+		</transition>
+		<transition>
+			<source ref="id30"/>
+			<target ref="id25"/>
+			<label kind="guard" x="-361" y="-38">r_&lt;900</label>
+			<label kind="synchronisation" x="-361" y="-21">i_resistance_!</label>
+			<label kind="assignment" x="-361" y="-4">r_=r_+10</label>
+		</transition>
+		<transition>
+			<source ref="id29"/>
+			<target ref="id23"/>
+			<label kind="synchronisation" x="68" y="-85">e_sync4?</label>
+			<label kind="assignment" x="68" y="-59">flag=false</label>
+			<nail x="68" y="-59"/>
+		</transition>
+		<transition>
+			<source ref="id26"/>
+			<target ref="id22"/>
+			<label kind="synchronisation" x="-297" y="-93">e_sync1?</label>
+			<label kind="assignment" x="-289" y="-76">flag=false</label>
+		</transition>
+		<transition>
+			<source ref="id25"/>
+			<target ref="id22"/>
+			<label kind="synchronisation" x="-340" y="17">e_sync2?</label>
+			<label kind="assignment" x="-340" y="42">flag=false</label>
+			<nail x="-255" y="42"/>
+		</transition>
+		<transition>
+			<source ref="id22"/>
+			<target ref="id28"/>
+			<label kind="guard" x="-187" y="-102">f3==1</label>
+			<label kind="assignment" x="-187" y="-85">f3=0</label>
+			<nail x="-204" y="-42"/>
+			<nail x="-178" y="-59"/>
+		</transition>
+		<transition>
+			<source ref="id34"/>
+			<target ref="id26"/>
+			<label kind="synchronisation" x="-323" y="-153">i_resistance_!</label>
+			<label kind="assignment" x="-280" y="-136">r_=800</label>
+		</transition>
+	</template>
+	<template>
+		<name x="5" y="5">CPS_</name>
+		<declaration>
+// Place local declarations here.</declaration>
+		<location id="id35" x="399" y="119">
+			<name x="372" y="136">minus_0</name>
+		</location>
+		<location id="id36" x="144" y="136">
+			<name x="110" y="94">minus_10</name>
+		</location>
+		<location id="id37" x="-128" y="119">
+			<name x="-153" y="136">minus_20</name>
+		</location>
+		<location id="id38" x="144" y="-93">
+		</location>
+		<location id="id39" x="0" y="-93">
+			<urgent/>
+		</location>
+		<location id="id40" x="-128" y="26">
+			<committed/>
+		</location>
+		<location id="id41" x="280" y="-93">
+			<urgent/>
+		</location>
+		<location id="id42" x="397" y="18">
+			<committed/>
+		</location>
+		<location id="id43" x="144" y="-34">
+			<urgent/>
+		</location>
+		<location id="id44" x="144" y="51">
+			<committed/>
+		</location>
+		<location id="id45" x="-59" y="204">
+			<committed/>
+		</location>
+		<location id="id46" x="42" y="204">
+			<urgent/>
+		</location>
+		<location id="id47" x="-51" y="85">
+			<urgent/>
+		</location>
+		<location id="id48" x="59" y="85">
+			<committed/>
+		</location>
+		<location id="id49" x="255" y="68">
+			<urgent/>
+		</location>
+		<location id="id50" x="323" y="68">
+			<committed/>
+		</location>
+		<location id="id51" x="246" y="204">
+			<committed/>
+		</location>
+		<location id="id52" x="323" y="204">
+			<urgent/>
+		</location>
+		<location id="id53" x="-263" y="119">
+			<urgent/>
+		</location>
+		<location id="id54" x="-263" y="263">
+			<committed/>
+		</location>
+		<location id="id55" x="399" y="263">
+			<urgent/>
+		</location>
+		<location id="id56" x="544" y="263">
+			<committed/>
+		</location>
+		<location id="id57" x="76" y="263">
+			<urgent/>
+		</location>
+		<location id="id58" x="212" y="263">
+			<committed/>
+		</location>
+		<init ref="id38"/>
+		<transition>
+			<source ref="id58"/>
+			<target ref="id36"/>
+			<label kind="synchronisation" x="144" y="187">c_sync9?</label>
+			<label kind="assignment" x="144" y="204">flag=false</label>
+			<nail x="212" y="178"/>
+			<nail x="144" y="178"/>
+		</transition>
+		<transition>
+			<source ref="id36"/>
+			<target ref="id57"/>
+			<label kind="guard" x="85" y="187">g9==1</label>
+			<label kind="assignment" x="85" y="204">g9=0</label>
+			<nail x="75" y="174"/>
+		</transition>
+		<transition>
+			<source ref="id57"/>
+			<target ref="id58"/>
+			<label kind="guard" x="85" y="280">r_&gt;=698 &amp;&amp; r_&lt;802</label>
+			<label kind="synchronisation" x="102" y="263">i_resistance_?</label>
+		</transition>
+		<transition>
+			<source ref="id56"/>
+			<target ref="id35"/>
+			<label kind="synchronisation" x="450" y="119">c_sync7?</label>
+			<label kind="assignment" x="450" y="136">flag=false</label>
+			<nail x="544" y="119"/>
+		</transition>
+		<transition>
+			<source ref="id35"/>
+			<target ref="id55"/>
+			<label kind="guard" x="408" y="170">g7==1</label>
+			<label kind="assignment" x="408" y="187">g7=0</label>
+		</transition>
+		<transition>
+			<source ref="id54"/>
+			<target ref="id37"/>
+			<label kind="synchronisation" x="-212" y="221">c_sync4?</label>
+			<label kind="assignment" x="-212" y="238">flag=false</label>
+			<nail x="-127" y="263"/>
+		</transition>
+		<transition>
+			<source ref="id37"/>
+			<target ref="id53"/>
+			<label kind="guard" x="-221" y="93">g4==1</label>
+			<label kind="assignment" x="-221" y="119">g4=0</label>
+		</transition>
+		<transition>
+			<source ref="id55"/>
+			<target ref="id56"/>
+			<label kind="guard" x="425" y="221">r_&gt;761</label>
+			<label kind="synchronisation" x="425" y="238">i_resistance_?</label>
+		</transition>
+		<transition>
+			<source ref="id53"/>
+			<target ref="id54"/>
+			<label kind="guard" x="-255" y="170">r_&lt;=733</label>
+			<label kind="synchronisation" x="-255" y="187">i_resistance_?</label>
+		</transition>
+		<transition>
+			<source ref="id45"/>
+			<target ref="id37"/>
+			<label kind="synchronisation" x="-110" y="153">c_sync10?</label>
+			<label kind="assignment" x="-110" y="170">flag=false</label>
+			<nail x="-110" y="204"/>
+		</transition>
+		<transition>
+			<source ref="id36"/>
+			<target ref="id46"/>
+			<label kind="guard" x="0" y="136">g10==1</label>
+			<label kind="assignment" x="-8" y="153">g10=0</label>
+			<nail x="42" y="161"/>
+		</transition>
+		<transition>
+			<source ref="id51"/>
+			<target ref="id36"/>
+			<label kind="synchronisation" x="178" y="136">c_sync8?</label>
+			<label kind="assignment" x="178" y="153">flag=false</label>
+			<nail x="246" y="136"/>
+		</transition>
+		<transition>
+			<source ref="id35"/>
+			<target ref="id52"/>
+			<label kind="guard" x="331" y="144">g8==1</label>
+			<label kind="assignment" x="331" y="161">g8=0</label>
+			<nail x="323" y="144"/>
+		</transition>
+		<transition>
+			<source ref="id50"/>
+			<target ref="id35"/>
+			<label kind="synchronisation" x="331" y="76">c_sync6?</label>
+			<label kind="assignment" x="331" y="93">flag=false</label>
+			<nail x="323" y="119"/>
+		</transition>
+		<transition>
+			<source ref="id36"/>
+			<target ref="id49"/>
+			<label kind="guard" x="187" y="85">g6==1</label>
+			<label kind="assignment" x="187" y="102">g6=0</label>
+			<nail x="255" y="110"/>
+		</transition>
+		<transition>
+			<source ref="id48"/>
+			<target ref="id36"/>
+			<label kind="synchronisation" x="-8" y="110">c_sync5?</label>
+			<label kind="assignment" x="68" y="110">flag=false</label>
+			<nail x="59" y="136"/>
+		</transition>
+		<transition>
+			<source ref="id37"/>
+			<target ref="id47"/>
+			<label kind="guard" x="-110" y="85">g5==1</label>
+			<label kind="assignment" x="-110" y="102">g5=0</label>
+			<nail x="-51" y="119"/>
+		</transition>
+		<transition>
+			<source ref="id44"/>
+			<target ref="id36"/>
+			<label kind="synchronisation" x="85" y="59">c_sync2?</label>
+			<label kind="assignment" x="85" y="76">flag=false</label>
+		</transition>
+		<transition>
+			<source ref="id38"/>
+			<target ref="id43"/>
+			<label kind="guard" x="153" y="-85">g2==1</label>
+			<label kind="assignment" x="153" y="-68">g2=1</label>
+		</transition>
+		<transition>
+			<source ref="id38"/>
+			<target ref="id41"/>
+			<label kind="guard" x="212" y="-93">g3==1</label>
+			<label kind="assignment" x="212" y="-76">g3=0</label>
+		</transition>
+		<transition>
+			<source ref="id42"/>
+			<target ref="id35"/>
+			<label kind="synchronisation" x="408" y="51">c_sync3?</label>
+			<label kind="assignment" x="408" y="68">flag=false</label>
+		</transition>
+		<transition>
+			<source ref="id40"/>
+			<target ref="id37"/>
+			<label kind="synchronisation" x="-195" y="51">c_sync1?</label>
+			<label kind="assignment" x="-195" y="68">flag=false</label>
+		</transition>
+		<transition>
+			<source ref="id38"/>
+			<target ref="id39"/>
+			<label kind="guard" x="51" y="-93">g1==1</label>
+			<label kind="assignment" x="51" y="-76">g1=0</label>
+		</transition>
+		<transition>
+			<source ref="id41"/>
+			<target ref="id42"/>
+			<label kind="guard" x="406" y="-76">r_&gt;=802</label>
+			<label kind="synchronisation" x="408" y="-42">i_resistance_?</label>
+			<label kind="assignment" x="406" y="-59">t_=0</label>
+			<nail x="397" y="-93"/>
+		</transition>
+		<transition>
+			<source ref="id43"/>
+			<target ref="id44"/>
+			<label kind="guard" x="161" y="-33">r_&gt;733 &amp;&amp; 
+r_&lt;802</label>
+			<label kind="synchronisation" x="153" y="25">i_resistance_?</label>
+			<label kind="assignment" x="161" y="8">t_=-10</label>
+		</transition>
+		<transition>
+			<source ref="id46"/>
+			<target ref="id45"/>
+			<label kind="guard" x="-34" y="187">r_&lt;698</label>
+			<label kind="synchronisation" x="-51" y="221">i_resistance_?</label>
+			<label kind="assignment" x="-34" y="204">t_=-20</label>
+			<nail x="42" y="246"/>
+			<nail x="-59" y="246"/>
+		</transition>
+		<transition>
+			<source ref="id52"/>
+			<target ref="id51"/>
+			<label kind="guard" x="263" y="204">r_&lt;761</label>
+			<label kind="synchronisation" x="238" y="246">i_resistance_?</label>
+			<label kind="assignment" x="263" y="221">t_=-10</label>
+			<nail x="323" y="246"/>
+			<nail x="246" y="246"/>
+		</transition>
+		<transition>
+			<source ref="id49"/>
+			<target ref="id50"/>
+			<label kind="guard" x="263" y="34">r_&gt;802</label>
+			<label kind="synchronisation" x="246" y="0">i_resistance_?</label>
+			<label kind="assignment" x="272" y="51">t_=0</label>
+			<nail x="255" y="25"/>
+			<nail x="323" y="25"/>
+		</transition>
+		<transition>
+			<source ref="id47"/>
+			<target ref="id48"/>
+			<label kind="guard" x="-25" y="25">r_&gt;733</label>
+			<label kind="synchronisation" x="-42" y="0">i_resistance_?</label>
+			<label kind="assignment" x="-25" y="42">t_=-10</label>
+			<nail x="-51" y="25"/>
+			<nail x="59" y="25"/>
+		</transition>
+		<transition>
+			<source ref="id39"/>
+			<target ref="id40"/>
+			<label kind="guard" x="-119" y="-76">r_&lt;=733</label>
+			<label kind="synchronisation" x="-119" y="-42">i_resistance_?</label>
+			<label kind="assignment" x="-119" y="-59">t_=-20</label>
+			<nail x="-128" y="-93"/>
+		</transition>
+	</template>
+	<system>// Place template instantiations here.
+system ResistanceChangeEmulator,CPS ,ResistanceChangeEmulator_ ,CPS_;</system>
+	<queries>
+		<query>
+			<formula>A[] not deadlock</formula>
+			<comment></comment>
+		</query>
+	</queries>
+</nta>

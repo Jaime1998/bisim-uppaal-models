@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.1//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_2.dtd'>
+<nta>
+	<declaration>/* 
+    Bisimulation Verification of UPPAAL Models (2020)
+    Dept of Software Science
+    TALLINN UNIVERSITY OF TECHNOLOGY (TALTECH)
+    Author : Naveed Ahmed Alizai M.Sc
+    Supervisors :  Jüri Vain Ph.D. , Leonidas Tsiopoulos Ph.D.
+*/
+// Place global declarations here.
+chan io_ch1, io_ch2;
+const int none = 0;
+const int fast = 1;
+const int late = 2;
+const int success=1;
+const int fail=2;
+int response = 0;
+int transaction=0;
+
+//Merged model declarations 
+
+// Place global declarations here.
+chan io_ch1_, io_ch2_;
+int response_ = 0;
+int transaction_=0;
+
+
+int f1=0, f2=0, g1=0, g2=0;
+bool flag=false;
+chan e_sync1, e_sync2, e_sync3, e_sync4;
+chan c_sync1, c_sync2;</declaration>
+	<template>
+		<name x="5" y="5">M1P1</name>
+		<declaration>// Place local declarations here.
+clock x;</declaration>
+		<location id="id0" x="-110" y="-8">
+		</location>
+		<location id="id1" x="59" y="-8">
+			<name x="49" y="-42">li</name>
+		</location>
+		<location id="id2" x="178" y="-119">
+			<name x="168" y="-153">li1</name>
+		</location>
+		<location id="id3" x="179" y="102">
+			<name x="170" y="119">li2</name>
+		</location>
+		<location id="id4" x="-110" y="-119">
+			<name x="-120" y="-153">li3</name>
+			<committed/>
+		</location>
+		<location id="id5" x="-110" y="102">
+			<name x="-119" y="119">li4</name>
+			<committed/>
+		</location>
+		<location id="id6" x="25" y="-119">
+			<urgent/>
+		</location>
+		<location id="id7" x="25" y="102">
+			<urgent/>
+		</location>
+		<init ref="id0"/>
+		<transition color="#ff00ff">
+			<source ref="id7"/>
+			<target ref="id5"/>
+			<label kind="synchronisation" x="-68" y="102">e_sync4!</label>
+		</transition>
+		<transition color="#ff00ff">
+			<source ref="id6"/>
+			<target ref="id4"/>
+			<label kind="synchronisation" x="-68" y="-144">e_sync3!</label>
+		</transition>
+		<transition>
+			<source ref="id4"/>
+			<target ref="id0"/>
+			<label kind="guard" x="-212" y="-102">response==fast</label>
+			<label kind="assignment" x="-212" y="-85">transaction=
+success</label>
+		</transition>
+		<transition>
+			<source ref="id5"/>
+			<target ref="id0"/>
+			<label kind="guard" x="-212" y="25">response==late</label>
+			<label kind="assignment" x="-212" y="42">transaction=
+fail</label>
+		</transition>
+		<transition>
+			<source ref="id2"/>
+			<target ref="id6"/>
+			<label kind="guard" x="68" y="-161">flag==false</label>
+			<label kind="synchronisation" x="76" y="-144">io_ch1!</label>
+			<label kind="assignment" x="59" y="-119">f1=1, flag=true</label>
+			<nail x="119" y="-119"/>
+		</transition>
+		<transition>
+			<source ref="id3"/>
+			<target ref="id7"/>
+			<label kind="guard" x="68" y="102">flag==false</label>
+			<label kind="synchronisation" x="76" y="119">io_ch2!</label>
+			<label kind="assignment" x="59" y="76">f2=1, flag=true</label>
+			<nail x="119" y="102"/>
+		</transition>
+		<transition>
+			<source ref="id1"/>
+			<target ref="id3"/>
+			<label kind="guard" x="119" y="51">x&gt;=10</label>
+			<label kind="synchronisation" x="110" y="34">e_sync2!</label>
+			<nail x="179" y="26"/>
+		</transition>
+		<transition>
+			<source ref="id1"/>
+			<target ref="id2"/>
+			<label kind="guard" x="119" y="-68">x&lt;=10</label>
+			<label kind="synchronisation" x="110" y="-85">e_sync1!</label>
+			<nail x="179" y="-42"/>
+		</transition>
+		<transition>
+			<source ref="id0"/>
+			<target ref="id1"/>
+			<label kind="assignment" x="-85" y="-8">response=none,
+transaction=none,
+x=0</label>
+		</transition>
+	</template>
+	<template>
+		<name>M1P2</name>
+		<location id="id8" x="-59" y="0">
+		</location>
+		<location id="id9" x="170" y="0">
+			<name x="187" y="-8">lj</name>
+		</location>
+		<location id="id10" x="-59" y="-110">
+			<urgent/>
+		</location>
+		<location id="id11" x="-59" y="93">
+			<urgent/>
+		</location>
+		<init ref="id8"/>
+		<transition color="#ff00ff">
+			<source ref="id11"/>
+			<target ref="id8"/>
+			<label kind="synchronisation" x="-51" y="34">c_sync2!</label>
+		</transition>
+		<transition>
+			<source ref="id9"/>
+			<target ref="id11"/>
+			<label kind="synchronisation" x="51" y="25">io_ch2?</label>
+			<label kind="assignment" x="51" y="42">response=late,
+g2=1</label>
+			<nail x="170" y="93"/>
+		</transition>
+		<transition color="#ff00ff">
+			<source ref="id10"/>
+			<target ref="id8"/>
+			<label kind="synchronisation" x="-51" y="-76">c_sync1!</label>
+		</transition>
+		<transition>
+			<source ref="id9"/>
+			<target ref="id10"/>
+			<label kind="synchronisation" x="59" y="-110">io_ch1?</label>
+			<label kind="assignment" x="59" y="-93">response=fast, 
+g1=1</label>
+			<nail x="170" y="-110"/>
+		</transition>
+		<transition>
+			<source ref="id8"/>
+			<target ref="id9"/>
+			<label kind="guard" x="0" y="-25">response==none</label>
+		</transition>
+	</template>
+	<template>
+		<name x="5" y="5">M2P1</name>
+		<declaration>
+// Place local declarations here.
+clock x_;</declaration>
+		<location id="id12" x="-110" y="-8">
+		</location>
+		<location id="id13" x="59" y="-8">
+			<name x="49" y="-42">li_</name>
+		</location>
+		<location id="id14" x="179" y="-118">
+			<name x="169" y="-152">li1_</name>
+		</location>
+		<location id="id15" x="179" y="102">
+			<name x="170" y="119">li2_</name>
+		</location>
+		<location id="id16" x="-110" y="-119">
+			<name x="-120" y="-153">li3_</name>
+			<committed/>
+		</location>
+		<location id="id17" x="-110" y="102">
+			<name x="-119" y="119">li4_</name>
+			<committed/>
+		</location>
+		<location id="id18" x="-8" y="-119">
+			<committed/>
+		</location>
+		<location id="id19" x="-8" y="102">
+			<committed/>
+		</location>
+		<location id="id20" x="93" y="-119">
+			<urgent/>
+		</location>
+		<location id="id21" x="93" y="102">
+			<urgent/>
+		</location>
+		<init ref="id12"/>
+		<transition color="#ff00ff">
+			<source ref="id15"/>
+			<target ref="id21"/>
+			<label kind="guard" x="119" y="102">f2==1</label>
+			<label kind="assignment" x="119" y="119">f2=0</label>
+		</transition>
+		<transition color="#ff00ff">
+			<source ref="id14"/>
+			<target ref="id20"/>
+			<label kind="guard" x="119" y="-153">f1==1</label>
+			<label kind="assignment" x="119" y="-136">f1=0</label>
+		</transition>
+		<transition>
+			<source ref="id20"/>
+			<target ref="id18"/>
+			<label kind="synchronisation" x="25" y="-144">io_ch1_!</label>
+		</transition>
+		<transition>
+			<source ref="id21"/>
+			<target ref="id19"/>
+			<label kind="synchronisation" x="17" y="76">io_ch2_!</label>
+		</transition>
+		<transition color="#ff00ff">
+			<source ref="id19"/>
+			<target ref="id17"/>
+			<label kind="synchronisation" x="-85" y="76">e_sync4?</label>
+			<label kind="assignment" x="-85" y="102">flag=false</label>
+		</transition>
+		<transition color="#ff00ff">
+			<source ref="id18"/>
+			<target ref="id16"/>
+			<label kind="synchronisation" x="-85" y="-144">e_sync3?</label>
+			<label kind="assignment" x="-85" y="-119">flag=false</label>
+		</transition>
+		<transition>
+			<source ref="id16"/>
+			<target ref="id12"/>
+			<label kind="guard" x="-229" y="-102">response_==fast</label>
+			<label kind="assignment" x="-212" y="-85">transaction_=
+success</label>
+		</transition>
+		<transition>
+			<source ref="id17"/>
+			<target ref="id12"/>
+			<label kind="guard" x="-229" y="25">response_==late</label>
+			<label kind="assignment" x="-212" y="42">transaction_=
+fail</label>
+		</transition>
+		<transition>
+			<source ref="id13"/>
+			<target ref="id15"/>
+			<label kind="guard" x="119" y="59">x_&gt;=10</label>
+			<label kind="synchronisation" x="110" y="42">e_sync2?</label>
+			<nail x="179" y="26"/>
+		</transition>
+		<transition>
+			<source ref="id13"/>
+			<target ref="id14"/>
+			<label kind="guard" x="119" y="-93">x_&lt;=10</label>
+			<label kind="synchronisation" x="110" y="-76">e_sync1?</label>
+			<nail x="179" y="-42"/>
+		</transition>
+		<transition>
+			<source ref="id12"/>
+			<target ref="id13"/>
+			<label kind="assignment" x="-85" y="-8">response_=none,
+transaction_=none,
+x_=0</label>
+		</transition>
+	</template>
+	<template>
+		<name>M2P2</name>
+		<location id="id22" x="-59" y="0">
+		</location>
+		<location id="id23" x="170" y="0">
+			<name x="187" y="-8">lj_</name>
+		</location>
+		<location id="id24" x="-59" y="-102">
+			<committed/>
+		</location>
+		<location id="id25" x="170" y="-102">
+			<urgent/>
+		</location>
+		<location id="id26" x="-59" y="110">
+			<committed/>
+		</location>
+		<location id="id27" x="170" y="110">
+			<urgent/>
+		</location>
+		<init ref="id22"/>
+		<transition>
+			<source ref="id27"/>
+			<target ref="id26"/>
+			<label kind="synchronisation" x="17" y="85">io_ch2_?</label>
+			<label kind="assignment" x="-8" y="110">response_=late</label>
+		</transition>
+		<transition color="#ff00ff">
+			<source ref="id26"/>
+			<target ref="id22"/>
+			<label kind="synchronisation" x="-51" y="42">c_sync2?</label>
+		</transition>
+		<transition color="#ff00ff">
+			<source ref="id23"/>
+			<target ref="id27"/>
+			<label kind="guard" x="127" y="34">g2==1</label>
+			<label kind="assignment" x="136" y="51">g2=0</label>
+		</transition>
+		<transition color="#ff00ff">
+			<source ref="id23"/>
+			<target ref="id25"/>
+			<label kind="guard" x="127" y="-68">g1==1</label>
+			<label kind="assignment" x="136" y="-51">g1=0</label>
+		</transition>
+		<transition color="#ff00ff">
+			<source ref="id24"/>
+			<target ref="id22"/>
+			<label kind="synchronisation" x="-51" y="-68">c_sync1?</label>
+		</transition>
+		<transition>
+			<source ref="id25"/>
+			<target ref="id24"/>
+			<label kind="synchronisation" x="17" y="-127">io_ch1_?</label>
+			<label kind="assignment" x="0" y="-102">response_=fast</label>
+		</transition>
+		<transition>
+			<source ref="id22"/>
+			<target ref="id23"/>
+			<label kind="guard" x="0" y="-25">response_==none</label>
+		</transition>
+	</template>
+	<system>// Place template instantiations here.
+
+
+    
+
+ //Model2 properties 
+
+// Place template instantiations here.
+
+
+    
+
+system M1P1, M1P2 ,M2P1, M2P2;</system>
+	<queries>
+		<query>
+			<formula>A[] not deadlock</formula>
+			<comment></comment>
+		</query>
+	</queries>
+</nta>
